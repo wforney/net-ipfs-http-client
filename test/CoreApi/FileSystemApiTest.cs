@@ -13,6 +13,14 @@ namespace Ipfs.Http
     public class FileSystemApiTest
     {
         [TestMethod]
+        public void GetText()
+        {
+            var ipfs = TestFixture.Ipfs;
+            var result = ipfs.FileSystem.ReadAllTextAsync("Qmf412jQZiuVUtdgnB36FXFX7xg5V6KEbSJ4dpQuhkLyfD").Result;
+            Assert.AreEqual("hello world", result);
+        }
+
+        [TestMethod]
         public void AddText()
         {
             var ipfs = TestFixture.Ipfs;
