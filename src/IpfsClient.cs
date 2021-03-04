@@ -1036,9 +1036,10 @@ namespace Ipfs.Http
         {
             var url = BuildCommand(command, arg, options);
             if (log.IsDebugEnabled)
-                log.Debug("GET " + url.ToString());
+                log.Debug("POST " + url.ToString());
+            var request = new HttpRequestMessage(HttpMethod.Post, url);
 
-            var response = await Api().GetAsync(url, HttpCompletionOption.ResponseHeadersRead, cancel);
+            var response = await Api().SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancel);
             await ThrowOnErrorAsync(response);
             return await response.Content.ReadAsStreamAsync();
         }
@@ -1106,9 +1107,9 @@ namespace Ipfs.Http
         {
             var url = BuildCommand(command, arg, options);
             if (log.IsDebugEnabled)
-                log.Debug("GET " + url.ToString());
-
-            var response = await Api().GetAsync(url, HttpCompletionOption.ResponseHeadersRead, cancel);
+                log.Debug("POST " + url.ToString());
+            var request = new HttpRequestMessage(HttpMethod.Post, url);
+            var response = await Api().SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancel);
             await ThrowOnErrorAsync(response);
             return await response.Content.ReadAsByteArrayAsync();
         }
