@@ -1,15 +1,12 @@
 ﻿using Ipfs.Http;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Linq;
-
 namespace Ipfs.Http
 {
 
     [TestClass]
     public class BlockTest
     {
-        byte[] someBytes = new byte[] { 1, 2, 3 };
+		readonly byte[] someBytes = new byte[] { 1, 2, 3 };
 
         [TestMethod]
         public void DataBytes()

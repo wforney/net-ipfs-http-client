@@ -1,15 +1,12 @@
-﻿using Ipfs.Http;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
-using System.IO;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
 namespace Ipfs.Http
 {
-    
-    [TestClass]
+
+	[TestClass]
     public class FileSystemNodeTest
     {
         [TestMethod]

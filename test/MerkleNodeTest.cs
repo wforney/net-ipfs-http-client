@@ -1,13 +1,12 @@
-﻿using Ipfs.Http;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;
 using System.IO;
 
 namespace Ipfs.Http
 {
-    
-    [TestClass]
+
+	[TestClass]
     public partial class MerkleNodeTest
     {
         const string IpfsInfo = "QmVtU7ths96fMgZ8YSZAbKghyieq7AjxNdcqyVzxTt3qVe";
@@ -37,9 +36,9 @@ namespace Ipfs.Http
         [TestMethod]
         public void NullHash()
         {
-            ExceptionAssert.Throws<ArgumentNullException>(() => new MerkleNode((string)null));
-            ExceptionAssert.Throws<ArgumentNullException>(() => new MerkleNode(""));
-            ExceptionAssert.Throws<ArgumentNullException>(() => new MerkleNode((Cid)null));
+			_ = ExceptionAssert.Throws<ArgumentNullException>( () => new MerkleNode( (string)null ) );
+			_ = ExceptionAssert.Throws<ArgumentNullException>( () => new MerkleNode( "" ) );
+			_ = ExceptionAssert.Throws<ArgumentNullException>( () => new MerkleNode( (Cid)null ) );
         }
 
         [TestMethod]
@@ -93,10 +92,10 @@ namespace Ipfs.Http
             Assert.AreNotEqual(a0, b);
             Assert.AreNotEqual(a0, null);
 
-            Assert.AreEqual<MerkleNode>(a0, a0);
-            Assert.AreEqual<MerkleNode>(a0, a1);
-            Assert.AreNotEqual<MerkleNode>(a0, b);
-            Assert.AreNotEqual<MerkleNode>(a0, null);
+            Assert.AreEqual( a0, a0);
+            Assert.AreEqual( a0, a1);
+            Assert.AreNotEqual( a0, b);
+            Assert.AreNotEqual( a0, null);
 
             Assert.AreEqual(a0.GetHashCode(), a0.GetHashCode());
             Assert.AreEqual(a0.GetHashCode(), a1.GetHashCode());

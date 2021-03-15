@@ -1,13 +1,12 @@
-﻿using Ipfs.Http;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;
 using System.IO;
 
 namespace Ipfs.Http
 {
-    
-    [TestClass]
+
+	[TestClass]
     public partial class PublishedMessageTest
     {
         const string json = @"{
