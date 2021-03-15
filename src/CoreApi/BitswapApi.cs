@@ -1,25 +1,15 @@
-﻿using Ipfs.CoreApi;
-using Newtonsoft.Json.Linq;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace Ipfs.Http
+﻿namespace Ipfs.Http
 {
+
     class BitswapApi : IBitswapApi
     {
-        IpfsClient ipfs;
+        readonly IpfsClient ipfs;
 
         internal BitswapApi(IpfsClient ipfs)
-        {
-            this.ipfs = ipfs;
-        }
+        => this.ipfs = ipfs;
 
         public Task<IDataBlock> GetAsync(Cid id, CancellationToken cancel = default(CancellationToken))
-        {
-            return ipfs.Block.GetAsync(id, cancel);
-        }
+        => ipfs.Block.GetAsync(id, cancel);
 
         public async Task<IEnumerable<Cid>> WantsAsync(MultiHash peer = null, CancellationToken cancel = default(CancellationToken))
         {
@@ -36,10 +26,8 @@ namespace Ipfs.Http
                 });
         }
 
-        public async Task UnwantAsync(Cid id, CancellationToken cancel = default(CancellationToken))
-        {
-            await ipfs.DoCommandAsync("bitswap/unwant", cancel, id);
-        }
+        public async Task UnwantAsync(Cid id, CancellationToken cancel = default)
+        => await ipfs.DoCommandAsync("bitswap/unwant", cancel, id);
 
         public async Task<BitswapLedger> LedgerAsync(Peer peer, CancellationToken cancel = default(CancellationToken))
         {

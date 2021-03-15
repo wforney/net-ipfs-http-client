@@ -5,31 +5,23 @@ using System.Threading.Tasks;
 
 namespace Ipfs.Http
 {
-    class BlockRepositoryApi : IBlockRepositoryApi
+	class BlockRepositoryApi : IBlockRepositoryApi
     {
-        IpfsClient ipfs;
+		readonly IpfsClient ipfs;
 
         internal BlockRepositoryApi(IpfsClient ipfs)
-        {
-            this.ipfs = ipfs;
-        }
+        => this.ipfs = ipfs;
 
-        public async Task RemoveGarbageAsync(CancellationToken cancel = default(CancellationToken))
-        {
-            await ipfs.DoCommandAsync("repo/gc", cancel);
-        }
+        public async Task RemoveGarbageAsync(CancellationToken cancel = default)
+        => await ipfs.DoCommandAsync("repo/gc", cancel);
 
-        public Task<RepositoryData> StatisticsAsync(CancellationToken cancel = default(CancellationToken))
-        {
-            return ipfs.DoCommandAsync<RepositoryData>("repo/stat", cancel);
-        }
+        public Task<RepositoryData> StatisticsAsync(CancellationToken cancel = default)
+        => ipfs.DoCommandAsync<RepositoryData>("repo/stat", cancel);
 
-        public async Task VerifyAsync(CancellationToken cancel = default(CancellationToken))
-        {
-            await ipfs.DoCommandAsync("repo/verify", cancel);
-        }
+        public async Task VerifyAsync(CancellationToken cancel = default)
+        => await ipfs.DoCommandAsync("repo/verify", cancel);
 
-        public async Task<string> VersionAsync(CancellationToken cancel = default(CancellationToken))
+        public async Task<string> VersionAsync(CancellationToken cancel = default)
         {
             var json = await ipfs.DoCommandAsync("repo/version", cancel);
             var info = JObject.Parse(json);

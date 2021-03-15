@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Runtime.Serialization;
-
-namespace Ipfs.Http
+﻿namespace Ipfs.Http
 {
     /// <inheritdoc />
     [DataContract]
@@ -18,28 +14,19 @@ namespace Ipfs.Http
         {
             get
             {
-                using (var stream = DataStream)
-                {
-                    if (DataStream == null)
-                        return null;
+                using var stream = DataStream;
+                if (DataStream == null)
+                    return null;
 
-                    using (var data = new MemoryStream())
-                    {
-                        stream.CopyTo(data);
-                        return data.ToArray();
-                    }
-                }
+                using var data = new MemoryStream();
+                stream.CopyTo(data);
+                return data.ToArray();
             }
         }
 
         /// <inheritdoc />
         public Stream DataStream
-        {
-            get
-            {
-                return IpfsClient?.FileSystem.ReadFileAsync(Id).Result;
-            }
-        }
+        => IpfsClient?.FileSystem.ReadFileAsync(Id).Result;
 
         /// <inheritdoc />
         [DataMember]
@@ -51,13 +38,11 @@ namespace Ipfs.Http
         {
             get
             {
-                if (links == null) GetInfo();
+                if (links is null) GetInfo();
                 return links;
             }
-            set
-            {
-                links = value;
-            }
+
+            set => links = value;
         }
 
         /// <summary>
@@ -75,10 +60,7 @@ namespace Ipfs.Http
                 if (!size.HasValue) GetInfo();
                 return size.Value;
             }
-            set
-            {
-                size = value;
-            }
+            set => size = value;
         }
 
         /// <summary>
@@ -96,10 +78,7 @@ namespace Ipfs.Http
                 if (!isDirectory.HasValue) GetInfo();
                 return isDirectory.Value;
             }
-            set
-            {
-                isDirectory = value;
-            }
+            set => isDirectory = value;
         }
 
         /// <summary>
@@ -139,10 +118,7 @@ namespace Ipfs.Http
                 }
                 return ipfsClient;
             }
-            set
-            {
-                ipfsClient = value;
-            }
+            set => ipfsClient = value;
         }
 
         void GetInfo()
@@ -152,6 +128,5 @@ namespace Ipfs.Http
             this.Links = node.Links;
             this.Size = node.Size;
         }
-
     }
 }

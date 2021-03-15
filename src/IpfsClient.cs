@@ -28,7 +28,7 @@ namespace Ipfs.Http
     {
         const string unknownFilename = "unknown";
 
-        static object safe = new object();
+        static readonly object safe = new object();
         static HttpClient api = null;
 
         /// <summary>
@@ -56,10 +56,10 @@ namespace Ipfs.Http
         {
             ApiUri = DefaultApiUri;
 
-            var assembly = typeof(IpfsClient).GetTypeInfo().Assembly;
+            var version = typeof( IpfsClient ).GetTypeInfo().Assembly.GetName().Version;
             var version = assembly.GetName().Version;
 
-            UserAgent = string.Format("{0}/{1}.{2}.{3}", assembly.GetName().Name, version.Major, version.Minor, version.Revision);
+            UserAgent = string.Format( "net-ipfs/{0}.{1}", version.Major, version.Minor );
             TrustedPeers = new TrustedPeerCollection(this);
 
             Bootstrap = new BootstrapApi(this);
@@ -303,7 +303,6 @@ namespace Ipfs.Http
                 var body = await response.Content.ReadAsStringAsync();
             }
         }
-
 
         /// <summary>
         ///   Perform an <see href="https://ipfs.io/docs/api/">IPFS API command</see> returning 

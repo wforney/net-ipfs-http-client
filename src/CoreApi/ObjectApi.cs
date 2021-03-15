@@ -11,41 +11,34 @@ namespace Ipfs.Http
 {
     class ObjectApi : IObjectApi
     {
-        private IpfsClient ipfs;
+        private readonly IpfsClient ipfs;
 
-        internal ObjectApi(IpfsClient ipfs)
-        {
-            this.ipfs = ipfs;
-        }
+      internal ObjectApi( IpfsClient ipfs ) => this.ipfs = ipfs;
 
-        public Task<DagNode> NewDirectoryAsync(CancellationToken cancel = default(CancellationToken))
-        {
-            return NewAsync("unixfs-dir", cancel);
-        }
+      public Task<DagNode> NewDirectoryAsync( CancellationToken cancel = default( CancellationToken ) )
+      => NewAsync( "unixfs-dir", cancel );
 
-        public async Task<DagNode> NewAsync(string template = null, CancellationToken cancel = default(CancellationToken))
-        {
-            var json = await ipfs.DoCommandAsync("object/new", cancel, template);
+      public async Task<DagNode> NewAsync( string template = null, CancellationToken cancel = default( CancellationToken ) )
+      {
+         var json = await ipfs.DoCommandAsync( "object/new", cancel, template );
             var hash = (string)(JObject.Parse(json)["Hash"]);
-            return await GetAsync(hash);
-        }
+         return await GetAsync( hash );
+      }
 
-        public async Task<DagNode> GetAsync(Cid id, CancellationToken cancel = default(CancellationToken))
-        {
-            var json = await ipfs.DoCommandAsync("object/get", cancel, id);
-            return GetDagFromJson(json);
-        }
+      public async Task<DagNode> GetAsync( Cid id, CancellationToken cancel = default )
+      {
+         var json = await ipfs.DoCommandAsync( "object/get", cancel, id );
+         return GetDagFromJson( json );
+      }
 
-        public Task<DagNode> PutAsync(byte[] data, IEnumerable<IMerkleLink> links = null, CancellationToken cancel = default(CancellationToken))
-        {
-            return PutAsync(new DagNode(data, links), cancel);
-        }
+      public Task<DagNode> PutAsync( byte[] data, IEnumerable<IMerkleLink> links = null, CancellationToken cancel = default )
+      => PutAsync( new DagNode( data, links ), cancel );
 
-        public async Task<DagNode> PutAsync(DagNode node, CancellationToken cancel = default(CancellationToken))
-        {
-            var json = await ipfs.UploadAsync("object/put", cancel, node.ToArray(), "inputenc=protobuf");
-            return node;
-        }
+      public async Task<DagNode> PutAsync( DagNode node, CancellationToken cancel = default )
+      {
+         _ = await ipfs.UploadAsync( "object/put", cancel, node.ToArray(), "inputenc=protobuf" );
+         return node;
+      }
 
         public Task<Stream> DataAsync(Cid id, CancellationToken cancel = default(CancellationToken))
         {
@@ -58,36 +51,36 @@ namespace Ipfs.Http
             return GetDagFromJson(json).Links;
         }
 
-        // TOOD: patch sub API
+      // TOOD: patch sub API
 
-        DagNode GetDagFromJson(string json)
-        {
-            var result = JObject.Parse(json);
-            byte[] data = null;
-            var stringData = (string)result["Data"];
-            if (stringData != null)
-                data = Encoding.UTF8.GetBytes(stringData);
-            var links = ((JArray)result["Links"])
-                .Select(link => new DagLink(
-                    (string)link["Name"],
-                    (string)link["Hash"],
-                    (long)link["Size"]));
-            return new DagNode(data, links);
-        }
+      DagNode GetDagFromJson( string json )
+      {
+         var result = JObject.Parse( json );
+         byte[] data = null;
+         var stringData = (string)result["Data"];
+         if( stringData != null )
+            data = Encoding.UTF8.GetBytes( stringData );
+         var links = ( (JArray)result["Links"] )
+             .Select( link => new DagLink(
+                  (string)link["Name"],
+                  (string)link["Hash"],
+                  (long)link["Size"] ) );
+         return new DagNode( data, links );
+      }
 
-        public async Task<ObjectStat> StatAsync(Cid id, CancellationToken cancel = default(CancellationToken))
-        {
-            var json = await ipfs.DoCommandAsync("object/stat", cancel, id);
-            var r = JObject.Parse(json);
+      public async Task<ObjectStat> StatAsync( Cid id, CancellationToken cancel = default )
+      {
+         var json = await ipfs.DoCommandAsync( "object/stat", cancel, id );
+         var r = JObject.Parse( json );
 
-            return new ObjectStat
-            {
-                LinkCount = (int)r["NumLinks"],
-                LinkSize = (long)r["LinksSize"],
-                BlockSize = (long)r["BlockSize"],
-                DataSize = (long)r["DataSize"],
-                CumulativeSize = (long)r["CumulativeSize"]
-            };
-        }
-    }
+         return new ObjectStat
+         {
+            LinkCount = (int)r["NumLinks"],
+            LinkSize = (long)r["LinksSize"],
+            BlockSize = (long)r["BlockSize"],
+            DataSize = (long)r["DataSize"],
+            CumulativeSize = (long)r["CumulativeSize"]
+         };
+      }
+   }
 }

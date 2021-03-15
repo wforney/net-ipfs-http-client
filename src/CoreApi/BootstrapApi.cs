@@ -7,16 +7,13 @@ using System.Threading.Tasks;
 
 namespace Ipfs.Http
 {
-    class BootstrapApi : IBootstrapApi
+	class BootstrapApi : IBootstrapApi
     {
-        IpfsClient ipfs;
+		readonly IpfsClient ipfs;
 
-        internal BootstrapApi(IpfsClient ipfs)
-        {
-            this.ipfs = ipfs;
-        }
+        internal BootstrapApi(IpfsClient ipfs) => this.ipfs = ipfs;
 
-        public async Task<MultiAddress> AddAsync(MultiAddress address, CancellationToken cancel = default(CancellationToken))
+        public async Task<MultiAddress> AddAsync(MultiAddress address, CancellationToken cancel = default)
         {
             var json = await ipfs.DoCommandAsync("bootstrap/add", cancel, address.ToString());
             var addrs = (JArray)(JObject.Parse(json)["Peers"]);
@@ -26,7 +23,7 @@ namespace Ipfs.Http
             return new MultiAddress((string)a);
         }
 
-        public async Task<IEnumerable<MultiAddress>> AddDefaultsAsync(CancellationToken cancel = default(CancellationToken))
+        public async Task<IEnumerable<MultiAddress>> AddDefaultsAsync(CancellationToken cancel = default)
         {
             var json = await ipfs.DoCommandAsync("bootstrap/add/default", cancel);
             var addrs = (JArray)(JObject.Parse(json)["Peers"]);
@@ -35,7 +32,7 @@ namespace Ipfs.Http
                 .Where(ma => ma != null);
         }
 
-        public async Task<IEnumerable<MultiAddress>> ListAsync(CancellationToken cancel = default(CancellationToken))
+        public async Task<IEnumerable<MultiAddress>> ListAsync(CancellationToken cancel = default)
         {
             var json = await ipfs.DoCommandAsync("bootstrap/list", cancel);
             var addrs = (JArray)(JObject.Parse(json)["Peers"]);
@@ -44,10 +41,8 @@ namespace Ipfs.Http
                 .Where(ma => ma != null);
         }
 
-        public Task RemoveAllAsync(CancellationToken cancel = default(CancellationToken))
-        {
-            return ipfs.DoCommandAsync("bootstrap/rm/all", cancel);
-        }
+        public Task RemoveAllAsync(CancellationToken cancel = default)
+        => ipfs.DoCommandAsync("bootstrap/rm/all", cancel);
 
         public async Task<MultiAddress> RemoveAsync(MultiAddress address, CancellationToken cancel = default(CancellationToken))
         {

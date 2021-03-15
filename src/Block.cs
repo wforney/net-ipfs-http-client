@@ -1,13 +1,10 @@
-﻿using System.IO;
-using System.Runtime.Serialization;
-
-namespace Ipfs.Http
+﻿namespace Ipfs.Http
 {
     /// <inheritdoc />
     [DataContract]
     public class Block : IDataBlock
     {
-        long? size;
+        private long? size;
 
         /// <inheritdoc />
         [DataMember]
@@ -19,31 +16,15 @@ namespace Ipfs.Http
 
         /// <inheritdoc />
         public Stream DataStream
-        {
-            get
-            {
-                return new MemoryStream(DataBytes, false);
-            }
-        }
+         => new MemoryStream(DataBytes, false);
 
         /// <inheritdoc />
         [DataMember]
         public long Size
         {
-            get
-            {
-                if (size.HasValue)
-                {
-                    return size.Value;
-                }
-                return DataBytes.Length;
-            }
-            set
-            {
-                size = value;
-            }
+            get => size ?? DataBytes.Length;
+            set => size = value;
         }
-
     }
 
 }

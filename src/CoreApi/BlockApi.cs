@@ -1,21 +1,10 @@
-﻿using Ipfs.CoreApi;
-using Newtonsoft.Json.Linq;
-using System.Collections.Generic;
-using System.IO;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace Ipfs.Http
+﻿namespace Ipfs.Http
 {
     class BlockApi : IBlockApi
     {
-        IpfsClient ipfs;
+        readonly IpfsClient ipfs;
 
-        internal BlockApi(IpfsClient ipfs)
-        {
-            this.ipfs = ipfs;
-        }
+        internal BlockApi(IpfsClient ipfs) => this.ipfs = ipfs;
 
         public async Task<IDataBlock> GetAsync(Cid id, CancellationToken cancel = default(CancellationToken))
         {

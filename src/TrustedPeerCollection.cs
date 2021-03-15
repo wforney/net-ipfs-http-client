@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-
-namespace Ipfs.Http
+﻿namespace Ipfs.Http
 {
     /// <summary>
     ///   A list of trusted peers.
@@ -27,10 +21,7 @@ namespace Ipfs.Http
         IpfsClient ipfs;
         MultiAddress[] peers;
 
-        internal TrustedPeerCollection(IpfsClient ipfs)
-        {
-            this.ipfs = ipfs;
-        }
+        internal TrustedPeerCollection(IpfsClient ipfs) => this.ipfs = ipfs;
 
         /// <inheritdoc />
         public void Add(MultiAddress peer)
@@ -92,10 +83,7 @@ namespace Ipfs.Http
         }
 
         /// <inheritdoc />
-        public bool IsReadOnly
-        {
-            get { return false; }
-        }
+        public bool IsReadOnly => false;
 
         /// <summary>
         ///    Remove the trusted peer.
@@ -127,9 +115,7 @@ namespace Ipfs.Http
             return peers.GetEnumerator();
         }
 
-        void Fetch()
-        {
-            peers = ipfs.DoCommandAsync<BootstrapListResponse>("bootstrap/list", default(CancellationToken)).Result.Peers;
-        }
+        void Fetch() => peers = ipfs.DoCommandAsync<BootstrapListResponse>(
+           "bootstrap/list", default(CancellationToken)).Result.Peers;
     }
 }
