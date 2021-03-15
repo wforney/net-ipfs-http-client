@@ -1,8 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Net.Http;
-using System.Threading;
-
-namespace Ipfs.Http
+﻿namespace Ipfs.Http
 {
     /// <summary>
     ///This is a test class for IpfsClientTest and is intended
@@ -26,7 +22,7 @@ namespace Ipfs.Http
         {
             IpfsClient target = TestFixture.Ipfs;
             object unknown;
-            ExceptionAssert.Throws<HttpRequestException>(() => unknown = target.DoCommandAsync("foobar", default(CancellationToken)).Result);
+            ExceptionAssert.Throws<HttpRequestException>(() => unknown = target.DoCommandAsync("foobar", default).Result);
         }
 
         [TestMethod]
@@ -34,7 +30,7 @@ namespace Ipfs.Http
         {
             IpfsClient target = TestFixture.Ipfs;
             object unknown;
-            ExceptionAssert.Throws<HttpRequestException>(() => unknown = target.DoCommandAsync("key/gen", default(CancellationToken)).Result);
+            ExceptionAssert.Throws<HttpRequestException>(() => unknown = target.DoCommandAsync("key/gen", default).Result);
         }
     }
 }

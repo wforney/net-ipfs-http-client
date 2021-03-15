@@ -1,9 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.IO;
-using System.Linq;
-
-namespace Ipfs.Http
+﻿namespace Ipfs.Http
 {
     [TestClass]
     public partial class MerkleNodeTest
@@ -35,9 +30,9 @@ namespace Ipfs.Http
         [TestMethod]
         public void NullHash()
         {
-            ExceptionAssert.Throws<ArgumentNullException>(() => new MerkleNode((string)null));
-            ExceptionAssert.Throws<ArgumentNullException>(() => new MerkleNode(""));
-            ExceptionAssert.Throws<ArgumentNullException>(() => new MerkleNode((Cid)null));
+            _ = ExceptionAssert.Throws<ArgumentNullException>(() => new MerkleNode((string)null));
+            _ = ExceptionAssert.Throws<ArgumentNullException>(() => new MerkleNode(""));
+            _ = ExceptionAssert.Throws<ArgumentNullException>(() => new MerkleNode((Cid)null));
         }
 
         [TestMethod]

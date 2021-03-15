@@ -1,7 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Linq;
-
-namespace Ipfs.Http
+﻿namespace Ipfs.Http
 {
     public partial class IpfsClientTest
     {

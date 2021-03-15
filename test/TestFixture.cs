@@ -1,6 +1,6 @@
 ﻿namespace Ipfs.Http
 {
-    public static class TestFixture
+	public static class TestFixture
     {
         /// <summary>
         ///   Fiddler cannot see localhost traffic because .Net bypasses the network stack for localhost/127.0.0.1. 
