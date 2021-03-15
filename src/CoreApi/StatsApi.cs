@@ -1,11 +1,5 @@
-﻿using Common.Logging;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using Newtonsoft.Json.Linq;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Ipfs.CoreApi;
@@ -13,19 +7,14 @@ using Ipfs.CoreApi;
 namespace Ipfs.Http
 {
 
-    class StatApi : IStatsApi
+	class StatApi : IStatsApi
     {
-        IpfsClient ipfs;
+		readonly IpfsClient ipfs;
 
-        internal StatApi(IpfsClient ipfs)
-        {
-            this.ipfs = ipfs;
-        }
+        internal StatApi(IpfsClient ipfs) => this.ipfs = ipfs;
 
         public Task<BandwidthData> BandwidthAsync(CancellationToken cancel = default(CancellationToken))
-        {
-            return ipfs.DoCommandAsync<BandwidthData>("stats/bw", cancel);
-        }
+        => ipfs.DoCommandAsync<BandwidthData>("stats/bw", cancel);
 
         public async Task<BitswapData> BitswapAsync(CancellationToken cancel = default(CancellationToken))
         {
@@ -46,10 +35,7 @@ namespace Ipfs.Http
         }
 
         public Task<RepositoryData> RepositoryAsync(CancellationToken cancel = default(CancellationToken))
-        {
-            return ipfs.DoCommandAsync<RepositoryData>("stats/repo", cancel);
-        }
-
+        => ipfs.DoCommandAsync<RepositoryData>("stats/repo", cancel);
 
     }
 }
