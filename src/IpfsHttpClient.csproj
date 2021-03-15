@@ -27,10 +27,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Ipfs.Core" Version="0.55.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
 	  <PackageReference Include="System.Net.Http" Version="4.3.3" Condition="'$(TargetFramework)' == 'netstandard14'" />
     <PackageReference Include="System.Net.Http" Version="4.3.3" Condition="'$(TargetFramework)' == 'net45'" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Ipfs.Core\IpfsCore.csproj" />
   </ItemGroup>
  
 </Project>
