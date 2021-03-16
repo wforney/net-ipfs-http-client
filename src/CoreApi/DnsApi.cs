@@ -11,7 +11,10 @@ namespace Ipfs.Http
 
       internal DnsApi( IpfsClient ipfs ) => this.ipfs = ipfs;
 
-      public async Task<string> ResolveAsync( string name, bool recursive = false, CancellationToken cancel = default( CancellationToken ) )
+      public async Task<string> ResolveAsync( 
+         string name, 
+         bool recursive = false, 
+         CancellationToken cancel = default )
       {
          var json = await ipfs.DoCommandAsync( "dns", cancel,
              name,

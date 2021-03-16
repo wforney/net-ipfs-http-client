@@ -48,7 +48,7 @@
 				throw new ArgumentNullException("path");
 
 			if (path.StartsWith("/ipfs/"))
-				path = path.Substring(6);
+                path = path[6..];
 
 			Id = Cid.Decode(path);
 			Name = name;
@@ -118,17 +118,7 @@
 		/// <inheritdoc />
 		[DataMember]
 		public IEnumerable<IMerkleLink> Links
-		{
-			get
-			{
-				if (links == null)
-				{
-					links = IpfsClient.Object.LinksAsync(Id).Result;
-				}
-
-				return links;
-			}
-		}
+         => links ??= IpfsClient.Object.LinksAsync( Id ).Result ;
 
 		/// <inheritdoc />
 		[DataMember]
