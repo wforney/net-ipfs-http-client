@@ -498,10 +498,9 @@ namespace Ipfs.Http
          var content = new MultipartFormDataContent();
          var streamContent = new StreamContent( data );
          streamContent.Headers.ContentType = new MediaTypeHeaderValue( "application/octet-stream" );
-         if( string.IsNullOrEmpty( name ) )
-            content.Add( streamContent, "file", UNKNOWN_FILENAME );
-         else
-            content.Add( streamContent, "file", name );
+         content.Add( streamContent, "file", string.IsNullOrEmpty( name ) 
+            ? UNKNOWN_FILENAME 
+            : name );
 
          var url = BuildCommand( command, null, options );
          if( _log.IsDebugEnabled )
