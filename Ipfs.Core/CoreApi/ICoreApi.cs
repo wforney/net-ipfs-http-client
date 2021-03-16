@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Ipfs.CoreApi
+﻿namespace Ipfs.CoreApi
 {
-    /// <summary>
-    ///   The IPFS Core API.
-    /// </summary>
-    /// <remarks>
-    ///   The Core API defines a set of interfaces to manage IPFS.
-    /// </remarks>
-    /// <seealso href="https://github.com/ipfs/interface-ipfs-core"/>
-    public interface ICoreApi
+	/// <summary>
+	///   The IPFS Core API.
+	/// </summary>
+	/// <remarks>
+	///   The Core API defines a set of interfaces to manage IPFS.
+	/// </remarks>
+	/// <seealso href="https://github.com/ipfs/interface-ipfs-core"/>
+	public interface ICoreApi
     {
         /// <summary>
         ///   Provides access to the Bitswap API.

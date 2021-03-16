@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Ipfs.CoreApi
+﻿namespace Ipfs.CoreApi
 {
-    /// <summary>
-    ///   The statistics for <see cref="IStatsApi.RepositoryAsync"/>.
-    /// </summary>
-    public class RepositoryData
+	/// <summary>
+	///   The statistics for <see cref="IStatsApi.RepositoryAsync"/>.
+	/// </summary>
+	public class RepositoryData
     {
         /// <summary>
         ///   The number of blocks in the repository.

@@ -1,30 +1,28 @@
 ﻿using Google.Protobuf;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Runtime.Serialization;
 using System.Text;
 
 namespace Ipfs
 {
-    /// <summary>
-    ///  Identifies some content, e.g. a Content ID.
-    /// </summary>
-    /// <remarks>
-    ///   <para>
-    ///   A Cid is a self-describing content-addressed identifier for distributed systems.
-    ///   </para>
-    ///   <para>
-    ///   Initially, IPFS used a <see cref="MultiHash"/> as the CID and this is still supported as <see cref="Version"/> 0.
-    ///   Version 1 adds a self describing structure to the multi-hash, see the <see href="https://github.com/ipld/cid">spec</see>. 
-    ///   </para>
-    ///   <note>
-    ///   The <see cref="MultiHash.Algorithm">hashing algorithm</see> must be "sha2-256" for a version 0 CID.
-    ///   </note>
-    /// </remarks>
-    /// <seealso href="https://github.com/ipld/cid"/>
-    [JsonConverter(typeof(Cid.CidJsonConverter))]
+	/// <summary>
+	///  Identifies some content, e.g. a Content ID.
+	/// </summary>
+	/// <remarks>
+	///   <para>
+	///   A Cid is a self-describing content-addressed identifier for distributed systems.
+	///   </para>
+	///   <para>
+	///   Initially, IPFS used a <see cref="MultiHash"/> as the CID and this is still supported as <see cref="Version"/> 0.
+	///   Version 1 adds a self describing structure to the multi-hash, see the <see href="https://github.com/ipld/cid">spec</see>. 
+	///   </para>
+	///   <note>
+	///   The <see cref="MultiHash.Algorithm">hashing algorithm</see> must be "sha2-256" for a version 0 CID.
+	///   </note>
+	/// </remarks>
+	/// <seealso href="https://github.com/ipld/cid"/>
+	[JsonConverter(typeof(Cid.CidJsonConverter))]
     public class Cid : IEquatable<Cid>
     {
         /// <summary>

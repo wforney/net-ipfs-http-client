@@ -1,17 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Ipfs.CoreApi
 {
-    /// <summary>
-    ///   Manages the files/directories in IPFS.
-    /// </summary>
-    /// <seealso href="https://github.com/ipfs/interface-ipfs-core/blob/master/SPEC/FILES.md">Files API spec</seealso>
-    public interface IFileSystemApi
+	/// <summary>
+	///   Manages the files/directories in IPFS.
+	/// </summary>
+	/// <seealso href="https://github.com/ipfs/interface-ipfs-core/blob/master/SPEC/FILES.md">Files API spec</seealso>
+	public interface IFileSystemApi
     {
         /// <summary>
         ///   Add a local file to the interplanetary file system.

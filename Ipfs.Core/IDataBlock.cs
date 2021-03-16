@@ -1,27 +1,21 @@
-﻿using Google.Protobuf;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 
 namespace Ipfs
 {
-    /// <summary>
-    ///   Some data that is stored in IPFS.
-    /// </summary>
-    /// <remarks>
-    ///   A <b>DataBlock</b> has an <see cref="Id">unique ID</see>
-    ///   and some data (<see cref="IDataBlock.DataBytes"/> 
-    ///   or <see cref="IDataBlock.DataStream"/>).
-    ///   <para>
-    ///   It is useful to talk about them as "blocks" in Bitswap 
-    ///   and other things that do not care about what is being stored.
-    ///   </para>
-    /// </remarks>
-    /// <seealso cref="IMerkleNode{Link}"/>
-    public interface IDataBlock
+	/// <summary>
+	///   Some data that is stored in IPFS.
+	/// </summary>
+	/// <remarks>
+	///   A <b>DataBlock</b> has an <see cref="Id">unique ID</see>
+	///   and some data (<see cref="IDataBlock.DataBytes"/> 
+	///   or <see cref="IDataBlock.DataStream"/>).
+	///   <para>
+	///   It is useful to talk about them as "blocks" in Bitswap 
+	///   and other things that do not care about what is being stored.
+	///   </para>
+	/// </remarks>
+	/// <seealso cref="IMerkleNode{Link}"/>
+	public interface IDataBlock
     {
 
         /// <summary>

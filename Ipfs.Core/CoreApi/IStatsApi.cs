@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 
 namespace Ipfs.CoreApi
 {
-    /// <summary>
-    ///   Get statistics/diagnostics for the various core components.
-    /// </summary>
-    public interface IStatsApi
+	/// <summary>
+	///   Get statistics/diagnostics for the various core components.
+	/// </summary>
+	public interface IStatsApi
     {
         /// <summary>
         ///   Get statistics on network bandwidth.

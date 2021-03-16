@@ -1,23 +1,21 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Ipfs.CoreApi
 {
-    /// <summary>
-    ///   Manages the IPFS Configuration.
-    /// </summary>
-    /// <remarks>
-    ///   <para>
-    ///   Configuration values are JSON.  <see href="http://www.newtonsoft.com/json">Json.NET</see>
-    ///   is used to represent JSON.
-    ///   </para>
-    /// </remarks>
-    /// <seealso href="https://github.com/ipfs/interface-ipfs-core/blob/master/SPEC/CONFIG.md">Config API spec</seealso>
-    public interface IConfigApi
+	/// <summary>
+	///   Manages the IPFS Configuration.
+	/// </summary>
+	/// <remarks>
+	///   <para>
+	///   Configuration values are JSON.  <see href="http://www.newtonsoft.com/json">Json.NET</see>
+	///   is used to represent JSON.
+	///   </para>
+	/// </remarks>
+	/// <seealso href="https://github.com/ipfs/interface-ipfs-core/blob/master/SPEC/CONFIG.md">Config API spec</seealso>
+	public interface IConfigApi
     {
         /// <summary>
         ///   Gets the entire configuration.

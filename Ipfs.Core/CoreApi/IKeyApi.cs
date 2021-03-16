@@ -1,21 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Ipfs.CoreApi
 {
-    /// <summary>
-    ///   Manages cryptographic keys.
-    /// </summary>
-    /// <remarks>
-    ///   <note>
-    ///   The Key API is work in progress! There be dragons here.
-    ///   </note>
-    /// </remarks>
-    /// <seealso href="https://github.com/ipfs/interface-ipfs-core/blob/master/SPEC/KEY.md">Key API spec</seealso>
-    public interface IKeyApi
+	/// <summary>
+	///   Manages cryptographic keys.
+	/// </summary>
+	/// <remarks>
+	///   <note>
+	///   The Key API is work in progress! There be dragons here.
+	///   </note>
+	/// </remarks>
+	/// <seealso href="https://github.com/ipfs/interface-ipfs-core/blob/master/SPEC/KEY.md">Key API spec</seealso>
+	public interface IKeyApi
     {
         /// <summary>
         ///   Creates a new key.

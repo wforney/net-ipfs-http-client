@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Ipfs.CoreApi
+﻿namespace Ipfs.CoreApi
 {
-    /// <summary>
-    ///   Information on a DAG node.
-    /// </summary>
-    /// <seealso cref="IObjectApi"/>
-    public class ObjectStat
+	/// <summary>
+	///   Information on a DAG node.
+	/// </summary>
+	/// <seealso cref="IObjectApi"/>
+	public class ObjectStat
     {
         /// <summary>
         ///   Number of links.

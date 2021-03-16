@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Ipfs.CoreApi
 {
-    /// <summary>
-    ///   Reports the <see cref="IProgress{T}">progress</see> of
-    ///   a transfer operation.
-    /// </summary>
-    public class TransferProgress
+	/// <summary>
+	///   Reports the <see cref="IProgress{T}">progress</see> of
+	///   a transfer operation.
+	/// </summary>
+	public class TransferProgress
     {
         /// <summary>
         ///   The name of the item being trasfered.

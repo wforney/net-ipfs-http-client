@@ -1,5 +1,4 @@
-﻿
-namespace Ipfs
+﻿namespace Ipfs
 {
 
     /// <summary>

@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Security.Cryptography;
-using System.Text;
 
 namespace Ipfs.Cryptography
 {
-    class IdentityHash : HashAlgorithm
+	class IdentityHash : HashAlgorithm
     {
         byte[] digest;
 
@@ -28,9 +26,6 @@ namespace Ipfs.Cryptography
             digest = buffer;
         }
 
-        protected override byte[] HashFinal()
-        {
-            return digest;
-        }
+        protected override byte[] HashFinal() => digest;
     }
 }
