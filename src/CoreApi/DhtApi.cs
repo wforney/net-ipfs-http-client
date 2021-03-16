@@ -10,21 +10,20 @@ using Ipfs.CoreApi;
 namespace Ipfs.Http
 {
 
-	class DhtApi : IDhtApi
+	class DhtApi : BaseApi, IDhtApi
 	{
 		static readonly ILog log = LogManager.GetLogger<DhtApi>();
-		readonly IpfsClient ipfs;
 
 		internal DhtApi( IpfsClient ipfs )
-		=> this.ipfs = ipfs;
+			: base( ipfs ) { }
 
 		public Task<Peer> FindPeerAsync( MultiHash id, CancellationToken cancel = default( CancellationToken ) )
-		=> ipfs.IdAsync( id, cancel );
+		=> Client.IdAsync( id, cancel );
 
 		public async Task<IEnumerable<Peer>> FindProvidersAsync( Cid id, int limit = 20, Action<Peer> providerFound = null, CancellationToken cancel = default( CancellationToken ) )
 		{
 			// TODO: providerFound action
-			var stream = await ipfs.PostDownloadAsync( "dht/findprovs", cancel, id, $"num-providers={limit}" );
+			var stream = await Client.PostDownloadAsync( "dht/findprovs", cancel, id, $"num-providers={limit}" );
 			return ProviderFromStream( stream, limit );
 		}
 

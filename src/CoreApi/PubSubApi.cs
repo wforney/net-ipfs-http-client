@@ -1,5 +1,4 @@
 ﻿using Common.Logging;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -12,32 +11,37 @@ using Ipfs.CoreApi;
 
 namespace Ipfs.Http
 {
-   class PubSubApi : IPubSubApi
+	class PubSubApi : BaseApi, IPubSubApi
    {
       static readonly ILog log = LogManager.GetLogger<PubSubApi>();
-      readonly IpfsClient ipfs;
 
-      internal PubSubApi( IpfsClient ipfs ) => this.ipfs = ipfs;
+      internal PubSubApi( IpfsClient ipfs ) : base( ipfs ){ }
 
-      public async Task<IEnumerable<string>> SubscribedTopicsAsync( CancellationToken cancel = default( CancellationToken ) )
+      public async Task<IEnumerable<string>> SubscribedTopicsAsync( 
+         CancellationToken cancel = default )
       {
-         var json = await ipfs.DoCommandAsync( "pubsub/ls", cancel );
+         var json = await Client.DoCommandAsync( "pubsub/ls", cancel );
          var result = JObject.Parse( json );
          var strings = result["Strings"] as JArray;
          if( strings == null ) return new string[0];
          return strings.Select( s => (string)s );
       }
 
-      public async Task<IEnumerable<Peer>> PeersAsync( string topic = null, CancellationToken cancel = default( CancellationToken ) )
+      public async Task<IEnumerable<Peer>> PeersAsync( 
+         string topic = null, 
+         CancellationToken cancel = default )
       {
-         var json = await ipfs.DoCommandAsync( "pubsub/peers", cancel, topic );
+         var json = await Client.DoCommandAsync( "pubsub/peers", cancel, topic );
          var result = JObject.Parse( json );
          var strings = result["Strings"] as JArray;
          if( strings == null ) return new Peer[0];
          return strings.Select( s => new Peer { Id = (string)s } );
       }
 
-      public Task PublishAsync( string topic, byte[] message, CancellationToken cancel = default( CancellationToken ) )
+      public Task PublishAsync( 
+         string topic, 
+         byte[] message, 
+         CancellationToken cancel = default )
       {
          var url = new StringBuilder();
          url.Append( "/api/v0/pubsub/pub" );
@@ -46,25 +50,31 @@ namespace Ipfs.Http
          url.Append( "&arg=" );
          var data = Encoding.ASCII.GetString( System.Net.WebUtility.UrlEncodeToBytes( message, 0, message.Length ) );
          url.Append( data );
-         return ipfs.DoCommandAsync( new Uri( ipfs.ApiUri, url.ToString() ), cancel );
+         return Client.DoCommandAsync( new Uri( Client.ApiUri, url.ToString() ), cancel );
       }
 
-      public Task PublishAsync( string topic, Stream message, CancellationToken cancel = default( CancellationToken ) )
+      public Task PublishAsync( 
+         string topic, 
+         Stream message, 
+         CancellationToken cancel = default )
       {
          using MemoryStream ms = new MemoryStream();
          message.CopyTo( ms );
          return PublishAsync( topic, ms.ToArray(), cancel );
       }
 
-      public async Task PublishAsync( string topic, string message, CancellationToken cancel = default( CancellationToken ) )
-      {
-         var _ = await ipfs.DoCommandAsync( "pubsub/pub", cancel, topic, "arg=" + message );
-         return;
-      }
+      public async Task PublishAsync( 
+         string topic, 
+         string message, 
+         CancellationToken cancel = default )
+         => await Client.DoCommandAsync( "pubsub/pub", cancel, topic, "arg=" + message );
 
-      public async Task SubscribeAsync( string topic, Action<IPublishedMessage> handler, CancellationToken cancellationToken )
+      public async Task SubscribeAsync( 
+         string topic, 
+         Action<IPublishedMessage> handler, 
+         CancellationToken cancellationToken = default )
       {
-         var messageStream = await ipfs.PostDownloadAsync( "pubsub/sub", cancellationToken, topic );
+         var messageStream = await Client.PostDownloadAsync( "pubsub/sub", cancellationToken, topic );
          var sr = new StreamReader( messageStream );
 
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
@@ -74,7 +84,10 @@ namespace Ipfs.Http
          return;
       }
 
-      void ProcessMessages( string topic, Action<PublishedMessage> handler, StreamReader sr, CancellationToken ct )
+      void ProcessMessages( 
+         string topic, 
+         Action<PublishedMessage> handler, 
+         StreamReader sr, CancellationToken ct = default )
       {
          log.DebugFormat( "Start listening for '{0}' messages", topic );
 

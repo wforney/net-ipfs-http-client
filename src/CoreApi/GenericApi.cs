@@ -11,14 +11,19 @@ namespace Ipfs.Http
 {
    public partial class IpfsClient : IGenericApi
    {
-      const double TicksPerNanosecond = (double)TimeSpan.TicksPerMillisecond * 0.000001;
+      private const double TicksPerNanosecond = (double)TimeSpan.TicksPerMillisecond * 0.000001;
 
       /// <inheritdoc />
-      public Task<Peer> IdAsync( MultiHash peer = null, CancellationToken cancel = default( CancellationToken ) )
+      public Task<Peer> IdAsync( 
+         MultiHash peer = null, 
+         CancellationToken cancel = default )
       => DoCommandAsync<Peer>( "id", cancel, peer?.ToString() );
 
       /// <inheritdoc />
-      public async Task<IEnumerable<PingResult>> PingAsync( MultiHash peer, int count = 10, CancellationToken cancel = default( CancellationToken ) )
+      public async Task<IEnumerable<PingResult>> PingAsync(
+         MultiHash peer, 
+         int count = 10, 
+         CancellationToken cancel = default )
       {
          var stream = await PostDownloadAsync( "ping", cancel,
              peer.ToString(),
@@ -27,7 +32,10 @@ namespace Ipfs.Http
       }
 
       /// <inheritdoc />
-      public async Task<IEnumerable<PingResult>> PingAsync( MultiAddress address, int count = 10, CancellationToken cancel = default( CancellationToken ) )
+      public async Task<IEnumerable<PingResult>> PingAsync( 
+         MultiAddress address,
+         int count = 10, 
+         CancellationToken cancel = default )
       {
          var stream = await PostDownloadAsync( "ping", cancel,
              address.ToString(),
@@ -41,8 +49,8 @@ namespace Ipfs.Http
          while( !sr.EndOfStream )
          {
             var json = sr.ReadLine();
-            if( log.IsDebugEnabled )
-               log.DebugFormat( "RSP {0}", json );
+            if( _log.IsDebugEnabled )
+               _log.DebugFormat( "RSP {0}", json );
 
             var r = JObject.Parse( json );
             yield return new PingResult
@@ -55,7 +63,10 @@ namespace Ipfs.Http
       }
 
       /// <inheritdoc />
-      public async Task<string> ResolveAsync( string name, bool recursive = true, CancellationToken cancel = default )
+      public async Task<string> ResolveAsync( 
+         string name, 
+         bool recursive = true,
+         CancellationToken cancel = default )
       {
          var json = await DoCommandAsync( "resolve", cancel,
              name,
@@ -66,7 +77,7 @@ namespace Ipfs.Http
 
       /// <inheritdoc />
       public async Task ShutdownAsync()
-      => await DoCommandAsync( "shutdown", default( CancellationToken ) );
+      => await DoCommandAsync( "shutdown", default );
 
       /// <inheritdoc />
       public Task<Dictionary<string, string>> VersionAsync( CancellationToken cancel = default )

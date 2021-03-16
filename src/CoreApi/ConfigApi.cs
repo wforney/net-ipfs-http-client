@@ -7,34 +7,32 @@ using Ipfs.CoreApi;
 
 namespace Ipfs.Http
 {
-   class ConfigApi : IConfigApi
+   class ConfigApi : BaseApi, IConfigApi
    {
-		readonly IpfsClient ipfs;
-
-      internal ConfigApi( IpfsClient ipfs ) => this.ipfs = ipfs;
+      internal ConfigApi( IpfsClient ipfs ) : base( ipfs ) { }
 
       public async Task<JObject> GetAsync( CancellationToken cancel = default )
       {
-         var json = await ipfs.DoCommandAsync( "config/show", cancel );
+         var json = await Client.DoCommandAsync( "config/show", cancel );
          return JObject.Parse( json );
       }
 
       public async Task<JToken> GetAsync( string key, CancellationToken cancel = default )
       {
-         var json = await ipfs.DoCommandAsync( "config", cancel, key );
+         var json = await Client.DoCommandAsync( "config", cancel, key );
          var r = JObject.Parse( json );
          return r["Value"];
       }
 
       public async Task SetAsync( string key, string value, CancellationToken cancel = default )
       {
-         var _ = await ipfs.DoCommandAsync( "config", cancel, key, "arg=" + value );
+         var _ = await Client.DoCommandAsync( "config", cancel, key, "arg=" + value );
          return;
       }
 
       public async Task SetAsync( string key, JToken value, CancellationToken cancel = default )
       {
-         var _ = await ipfs.DoCommandAsync( "config", cancel,
+         var _ = await Client.DoCommandAsync( "config", cancel,
              key,
              "arg=" + value.ToString( Formatting.None ),
              "json=true" );
@@ -44,7 +42,7 @@ namespace Ipfs.Http
       public async Task ReplaceAsync( JObject config )
       {
          var data = Encoding.UTF8.GetBytes( config.ToString( Formatting.None ) );
-         await ipfs.UploadAsync( "config/replace", CancellationToken.None, data );
+         await Client.UploadAsync( "config/replace", CancellationToken.None, data );
       }
    }
 

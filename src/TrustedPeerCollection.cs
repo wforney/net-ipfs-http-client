@@ -122,6 +122,6 @@ namespace Ipfs.Http
       }
 
       void Fetch() => peers = ipfs.DoCommandAsync<BootstrapListResponse>(
-         "bootstrap/list", default( CancellationToken ) ).Result.Peers;
+         "bootstrap/list", default ).Result.Peers;
    }
 }

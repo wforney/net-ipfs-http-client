@@ -9,15 +9,14 @@ using System.IO;
 namespace Ipfs.Http
 {
 
-	class BlockApi : IBlockApi
+	class BlockApi : BaseApi, IBlockApi
    {
-      readonly IpfsClient ipfs;
-
-      internal BlockApi( IpfsClient ipfs ) => this.ipfs = ipfs;
+      internal BlockApi( IpfsClient ipfs )
+         : base( ipfs ) { }
 
       public async Task<IDataBlock> GetAsync( Cid id, CancellationToken cancel = default( CancellationToken ) )
       {
-         var data = await ipfs.DownloadBytesAsync( "block/get", cancel, id );
+         var data = await Client.DownloadBytesAsync( "block/get", cancel, id );
          return new Block
          {
             DataBytes = data,
@@ -42,13 +41,13 @@ namespace Ipfs.Http
             options.Add( $"format={contentType}" );
             options.Add( $"cid-base={encoding}" );
          }
-         var json = await ipfs.UploadAsync( "block/put", cancel, data, options.ToArray() );
+         var json = await Client.UploadAsync( "block/put", cancel, data, options.ToArray() );
          var info = JObject.Parse( json );
          Cid cid = (string)info["Key"];
 
          if( pin )
          {
-            await ipfs.Pin.AddAsync( cid, recursive: false, cancel: cancel );
+            await Client.Pin.AddAsync( cid, recursive: false, cancel: cancel );
          }
 
          return cid;
@@ -71,13 +70,13 @@ namespace Ipfs.Http
             options.Add( $"format={contentType}" );
             options.Add( $"cid-base={encoding}" );
          }
-         var json = await ipfs.UploadAsync( "block/put", cancel, data, null, options.ToArray() );
+         var json = await Client.UploadAsync( "block/put", cancel, data, null, options.ToArray() );
          var info = JObject.Parse( json );
          Cid cid = (string)info["Key"];
 
          if( pin )
          {
-            await ipfs.Pin.AddAsync( cid, recursive: false, cancel: cancel );
+            await Client.Pin.AddAsync( cid, recursive: false, cancel: cancel );
          }
 
          return cid;
@@ -85,7 +84,7 @@ namespace Ipfs.Http
 
       public async Task<IDataBlock> StatAsync( Cid id, CancellationToken cancel = default( CancellationToken ) )
       {
-         var json = await ipfs.DoCommandAsync( "block/stat", cancel, id );
+         var json = await Client.DoCommandAsync( "block/stat", cancel, id );
          var info = JObject.Parse( json );
          return new Block
          {
@@ -96,7 +95,7 @@ namespace Ipfs.Http
 
       public async Task<Cid> RemoveAsync( Cid id, bool ignoreNonexistent = false, CancellationToken cancel = default( CancellationToken ) )
       {
-         var json = await ipfs.DoCommandAsync( "block/rm", cancel, id, "force=" + ignoreNonexistent.ToString().ToLowerInvariant() );
+         var json = await Client.DoCommandAsync( "block/rm", cancel, id, "force=" + ignoreNonexistent.ToString().ToLowerInvariant() );
          if( json.Length == 0 )
             return null;
          var result = JObject.Parse( json );

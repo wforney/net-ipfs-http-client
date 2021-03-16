@@ -7,33 +7,37 @@ using Ipfs.CoreApi;
 
 namespace Ipfs.Http
 {
-   class PinApi : IPinApi
+   class PinApi : BaseApi, IPinApi
    {
-		readonly IpfsClient ipfs;
+      internal PinApi( IpfsClient ipfs ) : base( ipfs ) { }
 
-      internal PinApi( IpfsClient ipfs ) => this.ipfs = ipfs;
-
-      public async Task<IEnumerable<Cid>> AddAsync( string path, bool recursive = true, CancellationToken cancel = default )
+      public async Task<IEnumerable<Cid>> AddAsync( 
+         string path, 
+         bool recursive = true, 
+         CancellationToken cancel = default )
       {
          var opts = "recursive=" + recursive.ToString().ToLowerInvariant();
-         var json = await ipfs.DoCommandAsync( "pin/add", cancel, path, opts );
+         var json = await Client.DoCommandAsync( "pin/add", cancel, path, opts );
          return ( (JArray)JObject.Parse( json )["Pins"] )
              .Select( p => (Cid)(string)p );
       }
 
       public async Task<IEnumerable<Cid>> ListAsync( CancellationToken cancel = default )
       {
-         var json = await ipfs.DoCommandAsync( "pin/ls", cancel );
+         var json = await Client.DoCommandAsync( "pin/ls", cancel );
          var keys = (JObject)( JObject.Parse( json )["Keys"] );
          return keys
              .Properties()
              .Select( p => (Cid)p.Name );
       }
 
-      public async Task<IEnumerable<Cid>> RemoveAsync( Cid id, bool recursive = true, CancellationToken cancel = default )
+      public async Task<IEnumerable<Cid>> RemoveAsync( 
+         Cid id, 
+         bool recursive = true, 
+         CancellationToken cancel = default )
       {
          var opts = "recursive=" + recursive.ToString().ToLowerInvariant();
-         var json = await ipfs.DoCommandAsync( "pin/rm", cancel, id, opts );
+         var json = await Client.DoCommandAsync( "pin/rm", cancel, id, opts );
          return ( (JArray)JObject.Parse( json )["Pins"] )
              .Select( p => (Cid)(string)p );
       }

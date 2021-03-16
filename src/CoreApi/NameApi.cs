@@ -6,16 +6,13 @@ using Ipfs.CoreApi;
 
 namespace Ipfs.Http
 {
-   class NameApi : INameApi
+   class NameApi : BaseApi, INameApi
    {
-      readonly IpfsClient ipfs;
-
-      internal NameApi( IpfsClient ipfs )
-      => this.ipfs = ipfs;
+      internal NameApi( IpfsClient ipfs ) : base( ipfs ) { }
 
       public async Task<NamedContent> PublishAsync( string path, bool resolve = true, string key = "self", TimeSpan? lifetime = null, CancellationToken cancel = default( CancellationToken ) )
       {
-         var json = await ipfs.DoCommandAsync( "name/publish", cancel,
+         var json = await Client.DoCommandAsync( "name/publish", cancel,
              path,
              "lifetime=24h", // TODO
              $"resolve={resolve.ToString().ToLowerInvariant()}",
@@ -34,7 +31,7 @@ namespace Ipfs.Http
 
       public async Task<string> ResolveAsync( string name, bool recursive = false, bool nocache = false, CancellationToken cancel = default( CancellationToken ) )
       {
-         var json = await ipfs.DoCommandAsync( "name/resolve", cancel,
+         var json = await Client.DoCommandAsync( "name/resolve", cancel,
              name,
              $"recursive={recursive.ToString().ToLowerInvariant()}",
              $"nocache={nocache.ToString().ToLowerInvariant()}" );

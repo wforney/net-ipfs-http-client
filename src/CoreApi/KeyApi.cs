@@ -1,18 +1,14 @@
-﻿using Common.Logging;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Ipfs.CoreApi;
 
 namespace Ipfs.Http
 {
-   class KeyApi : IKeyApi
+	class KeyApi : BaseApi, IKeyApi
    {
       /// <summary>
       ///   Information about a local key.
@@ -26,27 +22,27 @@ namespace Ipfs.Http
          public string Name { get; set; }
 
          /// <inheritdoc />
-         public override string ToString()
-         {
-            return Name;
-         }
-
+         public override string ToString() => Name;
       }
-      IpfsClient ipfs;
 
-      internal KeyApi( IpfsClient ipfs ) => this.ipfs = ipfs;
+      internal KeyApi( IpfsClient ipfs ) : base( ipfs ) { }
 
-      public async Task<IKey> CreateAsync( string name, string keyType, int size, CancellationToken cancel = default( CancellationToken ) )
+      public async Task<IKey> CreateAsync( 
+         string name, 
+         string keyType, 
+         int size, 
+         CancellationToken cancel = default )
       {
-         return await ipfs.DoCommandAsync<KeyInfo>( "key/gen", cancel,
+         return await Client.DoCommandAsync<KeyInfo>( "key/gen", cancel,
              name,
              $"type={keyType}",
              $"size={size}" );
       }
 
-      public async Task<IEnumerable<IKey>> ListAsync( CancellationToken cancel = default( CancellationToken ) )
+      public async Task<IEnumerable<IKey>> ListAsync(
+         CancellationToken cancel = default )
       {
-         var json = await ipfs.DoCommandAsync( "key/list", cancel, null, "l=true" );
+         var json = await Client.DoCommandAsync( "key/list", cancel, null, "l=true" );
          var keys = (JArray)( JObject.Parse( json )["Keys"] );
          return keys
              .Select( k => new KeyInfo
@@ -56,9 +52,11 @@ namespace Ipfs.Http
              } );
       }
 
-      public async Task<IKey> RemoveAsync( string name, CancellationToken cancel = default( CancellationToken ) )
+      public async Task<IKey> RemoveAsync( 
+         string name, 
+         CancellationToken cancel = default )
       {
-         var json = await ipfs.DoCommandAsync( "key/rm", cancel, name );
+         var json = await Client.DoCommandAsync( "key/rm", cancel, name );
          var keys = JObject.Parse( json )["Keys"] as JArray;
 
          return keys?
@@ -70,9 +68,12 @@ namespace Ipfs.Http
              .First();
       }
 
-      public async Task<IKey> RenameAsync( string oldName, string newName, CancellationToken cancel = default( CancellationToken ) )
+      public async Task<IKey> RenameAsync(
+         string oldName, 
+         string newName, 
+         CancellationToken cancel = default )
       {
-         var json = await ipfs.DoCommandAsync( "key/rename", cancel, oldName, $"arg={newName}" );
+         var json = await Client.DoCommandAsync( "key/rename", cancel, oldName, $"arg={newName}" );
          var key = JObject.Parse( json );
          return new KeyInfo
          {
@@ -81,12 +82,19 @@ namespace Ipfs.Http
          };
       }
 
-      public Task<string> ExportAsync( string name, char[] password, CancellationToken cancel = default( CancellationToken ) )
+      public Task<string> ExportAsync( 
+         string name, 
+         char[] password, 
+         CancellationToken cancel = default )
       {
          throw new NotImplementedException();
       }
 
-      public Task<IKey> ImportAsync( string name, string pem, char[] password = null, CancellationToken cancel = default( CancellationToken ) )
+      public Task<IKey> ImportAsync( 
+         string name, 
+         string pem, 
+         char[] password = null, 
+         CancellationToken cancel = default )
       {
          throw new NotImplementedException();
       }

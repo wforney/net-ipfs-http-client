@@ -1,5 +1,4 @@
-﻿using Common.Logging;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,26 +9,26 @@ using Ipfs.CoreApi;
 
 namespace Ipfs.Http
 {
-   class ObjectApi : IObjectApi
+	class ObjectApi : BaseApi, IObjectApi
    {
-		private static readonly ILog log = LogManager.GetLogger<ObjectApi>();
-      readonly IpfsClient ipfs;
 
-      internal ObjectApi( IpfsClient ipfs ) => this.ipfs = ipfs;
+      internal ObjectApi( IpfsClient ipfs ) : base( ipfs ) { }
 
-      public Task<DagNode> NewDirectoryAsync( CancellationToken cancel = default( CancellationToken ) )
+      public Task<DagNode> NewDirectoryAsync( CancellationToken cancel = default )
       => NewAsync( "unixfs-dir", cancel );
 
-      public async Task<DagNode> NewAsync( string template = null, CancellationToken cancel = default( CancellationToken ) )
+      public async Task<DagNode> NewAsync( 
+         string template = null, 
+         CancellationToken cancel = default )
       {
-         var json = await ipfs.DoCommandAsync( "object/new", cancel, template );
+         var json = await Client.DoCommandAsync( "object/new", cancel, template );
          var hash = (string)( JObject.Parse( json )["Hash"] );
          return await GetAsync( hash );
       }
 
       public async Task<DagNode> GetAsync( Cid id, CancellationToken cancel = default )
       {
-         var json = await ipfs.DoCommandAsync( "object/get", cancel, id );
+         var json = await Client.DoCommandAsync( "object/get", cancel, id );
          return GetDagFromJson( json );
       }
 
@@ -38,15 +37,15 @@ namespace Ipfs.Http
 
       public async Task<DagNode> PutAsync( DagNode node, CancellationToken cancel = default )
       {
-         _ = await ipfs.UploadAsync( "object/put", cancel, node.ToArray(), "inputenc=protobuf" );
+         _ = await Client.UploadAsync( "object/put", cancel, node.ToArray(), "inputenc=protobuf" );
          return node;
       }
 
       public Task<Stream> DataAsync( Cid id, CancellationToken cancel = default )
-      => ipfs.DownloadAsync( "object/data", cancel, id );
+      => Client.DownloadAsync( "object/data", cancel, id );
 
       public async Task<IEnumerable<IMerkleLink>> LinksAsync( Cid id, CancellationToken cancel = default )
-      => GetDagFromJson( await ipfs.DoCommandAsync( "object/links", cancel, id ) ).Links;
+      => GetDagFromJson( await Client.DoCommandAsync( "object/links", cancel, id ) ).Links;
 
       // TOOD: patch sub API
 
@@ -67,7 +66,7 @@ namespace Ipfs.Http
 
       public async Task<ObjectStat> StatAsync( Cid id, CancellationToken cancel = default )
       {
-         var json = await ipfs.DoCommandAsync( "object/stat", cancel, id );
+         var json = await Client.DoCommandAsync( "object/stat", cancel, id );
          var r = JObject.Parse( json );
 
          return new ObjectStat
