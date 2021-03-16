@@ -1,17 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Ipfs
 {
-    /// <summary>
-    ///   A daemon node on the IPFS network.
-    /// </summary>
-    /// <remarks>
-    ///   Equality is based solely on the peer's <see cref="Id"/>.
-    /// </remarks>
-    public class Peer : IEquatable<Peer>
+	/// <summary>
+	///   A daemon node on the IPFS network.
+	/// </summary>
+	/// <remarks>
+	///   Equality is based solely on the peer's <see cref="Id"/>.
+	/// </remarks>
+	public class Peer : IEquatable<Peer>
     {
         static MultiAddress[] noAddress = new MultiAddress[0];
         const string unknown = "unknown/0.0";

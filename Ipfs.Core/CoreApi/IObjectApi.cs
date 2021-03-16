@@ -1,24 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Ipfs.CoreApi
 {
-    /// <summary>
-    ///   Manages the IPFS Directed Acrylic Graph.
-    /// </summary>
-    /// <remarks>
-    ///   <note>
-    ///   This is being obsoleted by <see cref="IDagApi"/>.
-    ///   </note>
-    /// </remarks>
-    /// <seealso cref="IDagApi"/>
-    /// <seealso cref="DagNode"/>
-    /// <seealso href="https://github.com/ipfs/interface-ipfs-core/blob/master/SPEC/OBJECT.md">Object API spec</seealso>
-    public interface IObjectApi
+	/// <summary>
+	///   Manages the IPFS Directed Acrylic Graph.
+	/// </summary>
+	/// <remarks>
+	///   <note>
+	///   This is being obsoleted by <see cref="IDagApi"/>.
+	///   </note>
+	/// </remarks>
+	/// <seealso cref="IDagApi"/>
+	/// <seealso cref="DagNode"/>
+	/// <seealso href="https://github.com/ipfs/interface-ipfs-core/blob/master/SPEC/OBJECT.md">Object API spec</seealso>
+	public interface IObjectApi
     {
         /// <summary>
         ///   Creates a new file directory in IPFS.

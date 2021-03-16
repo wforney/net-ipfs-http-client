@@ -1,23 +1,20 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Ipfs
 {
-    /// <summary>
-    ///   A codec for Base-64 URL (RFC 4648).
-    /// </summary>
-    /// <remarks>
-    ///   <para>
-    ///   A codec for Base-64 URL, <see cref="Encode"/> and <see cref="Decode"/>.  Adds the extension method <see cref="ToBase64Url"/>
-    ///   to encode a byte array and <see cref="FromBase64Url"/> to decode a Base-64 URL string.
-    ///   </para>
-    ///   <para>
-    ///   The original code was found at <see href="https://brockallen.com/2014/10/17/base64url-encoding/"/>.
-    ///   </para>
-    /// </remarks>
-    public static class Base64Url
+	/// <summary>
+	///   A codec for Base-64 URL (RFC 4648).
+	/// </summary>
+	/// <remarks>
+	///   <para>
+	///   A codec for Base-64 URL, <see cref="Encode"/> and <see cref="Decode"/>.  Adds the extension method <see cref="ToBase64Url"/>
+	///   to encode a byte array and <see cref="FromBase64Url"/> to decode a Base-64 URL string.
+	///   </para>
+	///   <para>
+	///   The original code was found at <see href="https://brockallen.com/2014/10/17/base64url-encoding/"/>.
+	///   </para>
+	/// </remarks>
+	public static class Base64Url
     {
         /// <summary>
         ///   Converts an array of 8-bit unsigned integers to its equivalent string representation that is 

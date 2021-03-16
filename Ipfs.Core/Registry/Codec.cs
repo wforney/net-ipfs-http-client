@@ -1,19 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Ipfs.Registry
 {
-    /// <summary>
-    ///   Metadata for IPFS multi-codec.
-    /// </summary>
-    /// <remarks>
-    ///   IPFS assigns a unique <see cref="Name"/> and <see cref="Code"/> to codecs.
-    ///   See <see href="https://github.com/multiformats/multicodec/blob/master/table.csv">table.csv</see> 
-    ///   for the currently defined multi-codecs.
-    /// </remarks>
-    /// <seealso href="https://github.com/multiformats/multicodec"/>
-    public class Codec
+	/// <summary>
+	///   Metadata for IPFS multi-codec.
+	/// </summary>
+	/// <remarks>
+	///   IPFS assigns a unique <see cref="Name"/> and <see cref="Code"/> to codecs.
+	///   See <see href="https://github.com/multiformats/multicodec/blob/master/table.csv">table.csv</see> 
+	///   for the currently defined multi-codecs.
+	/// </remarks>
+	/// <seealso href="https://github.com/multiformats/multicodec"/>
+	public class Codec
     {
         internal static Dictionary<string, Codec> Names = new Dictionary<string, Codec>();
         internal static Dictionary<int, Codec> Codes = new Dictionary<int, Codec>();

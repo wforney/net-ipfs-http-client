@@ -1,22 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Ipfs.CoreApi
 {
-    /// <summary>
-    ///   Manages the IPNS (Interplanetary Name Space).
-    /// </summary>
-    /// <remarks>
-    ///   IPNS is a PKI namespace, where names are the hashes of public keys, and
-    ///   the private key enables publishing new(signed) values. The default name
-    ///   is the node's own <see cref="Peer.Id"/>,
-    ///   which is the hash of its public key.
-    /// </remarks>
-    /// <seealso href="https://github.com/ipfs/interface-ipfs-core/blob/master/SPEC/NAME.md">Name API spec</seealso>
-    public interface INameApi
+	/// <summary>
+	///   Manages the IPNS (Interplanetary Name Space).
+	/// </summary>
+	/// <remarks>
+	///   IPNS is a PKI namespace, where names are the hashes of public keys, and
+	///   the private key enables publishing new(signed) values. The default name
+	///   is the node's own <see cref="Peer.Id"/>,
+	///   which is the hash of its public key.
+	/// </remarks>
+	/// <seealso href="https://github.com/ipfs/interface-ipfs-core/blob/master/SPEC/NAME.md">Name API spec</seealso>
+	public interface INameApi
     {
         /// <summary>
         ///   Publish an IPFS name.

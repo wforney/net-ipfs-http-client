@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Ipfs.CoreApi
 {
-    /// <summary>
-    ///   Manage pinned objects (locally stored and permanent).
-    /// </summary>
-    /// <seealso href="https://github.com/ipfs/interface-ipfs-core/blob/master/SPEC/PIN.md">Pin API spec</seealso>
-    public interface IPinApi
+	/// <summary>
+	///   Manage pinned objects (locally stored and permanent).
+	/// </summary>
+	/// <seealso href="https://github.com/ipfs/interface-ipfs-core/blob/master/SPEC/PIN.md">Pin API spec</seealso>
+	public interface IPinApi
     {
         /// <summary>
         ///   Adds an IPFS object to the pinset and also stores it to the IPFS repo. pinset is the set of hashes currently pinned (not gc'able).

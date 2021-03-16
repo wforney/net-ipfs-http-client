@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Ipfs.CoreApi
 {
-    /// <summary>
-    ///   The result from sending a <see cref="IGenericApi.PingAsync(MultiHash, int, System.Threading.CancellationToken)"/>.
-    /// </summary>
-    public class PingResult
+	/// <summary>
+	///   The result from sending a <see cref="IGenericApi.PingAsync(MultiHash, int, System.Threading.CancellationToken)"/>.
+	/// </summary>
+	public class PingResult
     {
         /// <summary>
         ///   Indicates success or failure.

@@ -1,22 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Ipfs.Registry;
 
 namespace Ipfs
 {
-    /// <summary>
-    ///   Self identifying base encodings.
-    /// </summary>
-    /// <remarks>
-    ///   <b>MultiBase</b> is a protocol for distinguishing base encodings 
-    ///   and other simple string encodings.  
-    ///   See the <see cref="MultiBaseAlgorithm">registry</see> for supported algorithms.
-    /// </remarks>
-    /// <seealso href="https://github.com/multiformats/multibase"/>
-    public static class MultiBase
+	/// <summary>
+	///   Self identifying base encodings.
+	/// </summary>
+	/// <remarks>
+	///   <b>MultiBase</b> is a protocol for distinguishing base encodings 
+	///   and other simple string encodings.  
+	///   See the <see cref="MultiBaseAlgorithm">registry</see> for supported algorithms.
+	/// </remarks>
+	/// <seealso href="https://github.com/multiformats/multibase"/>
+	public static class MultiBase
     {
         /// <summary>
         ///   The default multi-base algorithm is "base58btc".

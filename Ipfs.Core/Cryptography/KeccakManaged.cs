@@ -2,13 +2,10 @@
 // This is a copy of https://bitbucket.org/jdluzen/sha3/raw/d1fd55dc225d18a7fb61515b62d3c8f164d2e788/SHA3Managed/SHA3Managed.cs
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Ipfs.Cryptography
 {
-    internal partial class KeccakManaged : Keccak
+	internal partial class KeccakManaged : Keccak
     {
         public KeccakManaged(int hashBitLength)
             : base(hashBitLength)

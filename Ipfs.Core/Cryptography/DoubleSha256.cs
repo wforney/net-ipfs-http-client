@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Security.Cryptography;
-using System.Text;
 
 namespace Ipfs.Cryptography
 {
-    class DoubleSha256 : HashAlgorithm
+	class DoubleSha256 : HashAlgorithm
     {
         HashAlgorithm digest = SHA256.Create();
         byte[] round1;

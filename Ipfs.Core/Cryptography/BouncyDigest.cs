@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Ipfs.Cryptography
+﻿namespace Ipfs.Cryptography
 {
-    /// <summary>
-    ///   Thin wrapper around bouncy castle digests.
-    /// </summary>
-    /// <remarks>
-    ///   Makes a Bouncy Caslte IDigest speak .Net HashAlgorithm.
-    /// </remarks>
-    internal class BouncyDigest : System.Security.Cryptography.HashAlgorithm
+	/// <summary>
+	///   Thin wrapper around bouncy castle digests.
+	/// </summary>
+	/// <remarks>
+	///   Makes a Bouncy Caslte IDigest speak .Net HashAlgorithm.
+	/// </remarks>
+	internal class BouncyDigest : System.Security.Cryptography.HashAlgorithm
     {
         Org.BouncyCastle.Crypto.IDigest digest;
 

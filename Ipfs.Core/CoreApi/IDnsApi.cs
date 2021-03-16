@@ -1,20 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 
 namespace Ipfs.CoreApi
 {
-    /// <summary>
-    ///   DNS mapping to IPFS.
-    /// </summary>
-    /// <remarks>
-    ///   Multihashes are hard to remember, but domain names are usually easy to
-    ///   remember. To create memorable aliases for multihashes, DNS TXT
-    ///   records can point to other DNS links, IPFS objects, IPNS keys, etc.
-    /// </remarks>
-    public interface IDnsApi
+	/// <summary>
+	///   DNS mapping to IPFS.
+	/// </summary>
+	/// <remarks>
+	///   Multihashes are hard to remember, but domain names are usually easy to
+	///   remember. To create memorable aliases for multihashes, DNS TXT
+	///   records can point to other DNS links, IPFS objects, IPNS keys, etc.
+	/// </remarks>
+	public interface IDnsApi
     {
 
         /// <summary>

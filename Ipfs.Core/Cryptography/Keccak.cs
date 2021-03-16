@@ -7,13 +7,10 @@
  * This is a copy of https://bitbucket.org/jdluzen/sha3/raw/d1fd55dc225d18a7fb61515b62d3c8f164d2e788/SHA3/SHA3.cs
  */
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Ipfs.Cryptography
 {
-    internal abstract class Keccak :
+	internal abstract class Keccak :
 #if PORTABLE
     IHashAlgorithm
 #else

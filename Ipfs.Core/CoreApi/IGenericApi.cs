@@ -1,17 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Ipfs.CoreApi
 {
-    /// <summary>
-    ///   Some miscellaneous methods.
-    /// </summary>
-    /// <seealso href="https://github.com/ipfs/interface-ipfs-core/blob/master/SPEC/MISCELLANEOUS.md">Generic API spec</seealso>
-    public interface IGenericApi
+	/// <summary>
+	///   Some miscellaneous methods.
+	/// </summary>
+	/// <seealso href="https://github.com/ipfs/interface-ipfs-core/blob/master/SPEC/MISCELLANEOUS.md">Generic API spec</seealso>
+	public interface IGenericApi
     {
         /// <summary>
         ///   Information about an IPFS peer.

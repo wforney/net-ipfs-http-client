@@ -1,20 +1,17 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Ipfs
 {
-    /// <summary>
-    ///   A codec for Base-64 (RFC 4648) with no padding.
-    /// </summary>
-    /// <remarks>
-    ///   <para>
-    ///   A codec for Base-64, <see cref="Encode"/> and <see cref="Decode"/>.  Adds the extension method <see cref="ToBase64NoPad"/>
-    ///   to encode a byte array and <see cref="FromBase64NoPad"/> to decode a Base-64 string.
-    ///   </para>
-    /// </remarks>
-    public static class Base64NoPad
+	/// <summary>
+	///   A codec for Base-64 (RFC 4648) with no padding.
+	/// </summary>
+	/// <remarks>
+	///   <para>
+	///   A codec for Base-64, <see cref="Encode"/> and <see cref="Decode"/>.  Adds the extension method <see cref="ToBase64NoPad"/>
+	///   to encode a byte array and <see cref="FromBase64NoPad"/> to decode a Base-64 string.
+	///   </para>
+	/// </remarks>
+	public static class Base64NoPad
     {
         /// <summary>
         ///   Converts an array of 8-bit unsigned integers to its equivalent string representation that is 

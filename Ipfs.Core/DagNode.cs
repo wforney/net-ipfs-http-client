@@ -4,19 +4,17 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Ipfs
 {
-    /// <summary>
-    ///   A node in the IPFS Merkle DAG.
-    /// </summary>
-    /// <remarks>
-    ///   A <b>DagNode</b> has opaque <see cref="DagNode.DataBytes"/>
-    ///   and a set of navigable <see cref="DagNode.Links"/>.
-    /// </remarks>
-    [DataContract]
+	/// <summary>
+	///   A node in the IPFS Merkle DAG.
+	/// </summary>
+	/// <remarks>
+	///   A <b>DagNode</b> has opaque <see cref="DagNode.DataBytes"/>
+	///   and a set of navigable <see cref="DagNode.Links"/>.
+	/// </remarks>
+	[DataContract]
     public class DagNode : IMerkleNode<IMerkleLink>
     {
         Cid id;

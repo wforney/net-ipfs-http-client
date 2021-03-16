@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 
 namespace Ipfs.CoreApi
 {
-    /// <summary>
-    ///   A basic Put/Get interface.
-    /// </summary>
-    public interface IValueStore
+	/// <summary>
+	///   A basic Put/Get interface.
+	/// </summary>
+	public interface IValueStore
     {
         /// <summary>
         ///   Gets th value of a key.

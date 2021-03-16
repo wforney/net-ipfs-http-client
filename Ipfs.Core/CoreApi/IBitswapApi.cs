@@ -1,32 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Ipfs.CoreApi
 {
-    /// <summary>
-    ///   Data trading module for IPFS. Its purpose is to request blocks from and 
-    ///   send blocks to other peers in the network.
-    /// </summary>
-    /// <remarks>
-    ///   Bitswap has two primary jobs
-    ///   <list type="bullet">
-    ///     <item>
-    ///       <description>
-    ///       Attempt to acquire blocks from the network that  have been requested by the client
-    ///       </description>
-    ///     </item>
-    ///     <item>
-    ///       <description>
-    ///       Judiciously (though strategically) send blocks in its possession to other peers who want them
-    ///       </description>
-    ///     </item>
-    ///   </list>
-    /// </remarks>
-    /// <seealso href="https://github.com/ipfs/specs/tree/master/bitswap">Bitswap spec</seealso>
-    public interface IBitswapApi
+	/// <summary>
+	///   Data trading module for IPFS. Its purpose is to request blocks from and 
+	///   send blocks to other peers in the network.
+	/// </summary>
+	/// <remarks>
+	///   Bitswap has two primary jobs
+	///   <list type="bullet">
+	///     <item>
+	///       <description>
+	///       Attempt to acquire blocks from the network that  have been requested by the client
+	///       </description>
+	///     </item>
+	///     <item>
+	///       <description>
+	///       Judiciously (though strategically) send blocks in its possession to other peers who want them
+	///       </description>
+	///     </item>
+	///   </list>
+	/// </remarks>
+	/// <seealso href="https://github.com/ipfs/specs/tree/master/bitswap">Bitswap spec</seealso>
+	public interface IBitswapApi
     {
         /// <summary>
         ///   Gets a block from the IPFS network.

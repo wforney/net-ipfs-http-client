@@ -1,24 +1,22 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Ipfs.CoreApi
 {
-    /// <summary>
-    ///   Manages the IPLD (linked data) Directed Acrylic Graph.
-    /// </summary>
-    /// <remarks>
-    ///   The DAG API is a replacement of the <see cref="IObjectApi"/>, which only supported 'dag-pb'.
-    ///   This API supports other IPLD formats, such as cbor, ethereum-block, git, ...
-    /// </remarks>
-    /// <seealso cref="IObjectApi"/>
-    /// <seealso cref="ILinkedNode"/>
-    /// <seealso href="https://github.com/ipfs/interface-ipfs-core/blob/master/SPEC/DAG.md">Dag API spec</seealso>
-    public interface IDagApi
+	/// <summary>
+	///   Manages the IPLD (linked data) Directed Acrylic Graph.
+	/// </summary>
+	/// <remarks>
+	///   The DAG API is a replacement of the <see cref="IObjectApi"/>, which only supported 'dag-pb'.
+	///   This API supports other IPLD formats, such as cbor, ethereum-block, git, ...
+	/// </remarks>
+	/// <seealso cref="IObjectApi"/>
+	/// <seealso cref="ILinkedNode"/>
+	/// <seealso href="https://github.com/ipfs/interface-ipfs-core/blob/master/SPEC/DAG.md">Dag API spec</seealso>
+	public interface IDagApi
     {
         /// <summary>
         ///  Put JSON data as an IPLD node.

@@ -1,19 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Ipfs.CoreApi
 {
-    /// <summary>
-    ///   Manages the swarm of peers.
-    /// </summary>
-    /// <remarks>
-    ///   The swarm is a sequence of connected peer nodes.
-    /// </remarks>
-    /// <seealso href="https://github.com/ipfs/interface-ipfs-core/blob/master/SPEC/SWARM.md">Swarm API spec</seealso>
-    public interface ISwarmApi
+	/// <summary>
+	///   Manages the swarm of peers.
+	/// </summary>
+	/// <remarks>
+	///   The swarm is a sequence of connected peer nodes.
+	/// </remarks>
+	/// <seealso href="https://github.com/ipfs/interface-ipfs-core/blob/master/SPEC/SWARM.md">Swarm API spec</seealso>
+	public interface ISwarmApi
     {
         /// <summary>
         ///   Get the peers in the current swarm.
