@@ -191,7 +191,7 @@ namespace Ipfs.Http
                 {
                     q.Append(option.Substring(0, i));
                     q.Append('=');
-                    q.Append(WebUtility.UrlEncode(option.Substring(i + 1)));
+                    q.Append( WebUtility.UrlEncode( option[( i + 1 )..] ) );
                 }
             }
 

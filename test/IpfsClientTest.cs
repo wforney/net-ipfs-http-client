@@ -22,7 +22,7 @@
         {
             IpfsClient target = TestFixture.Ipfs;
             object unknown;
-            ExceptionAssert.Throws<HttpRequestException>(() => unknown = target.DoCommandAsync("foobar", default).Result);
+            ExceptionAssert.Throws<HttpRequestException>(() => unknown = target.DoCommandAsync<string>("foobar", default).Result);
         }
 
         [TestMethod]
@@ -30,7 +30,7 @@
         {
             IpfsClient target = TestFixture.Ipfs;
             object unknown;
-            ExceptionAssert.Throws<HttpRequestException>(() => unknown = target.DoCommandAsync("key/gen", default).Result);
+            ExceptionAssert.Throws<HttpRequestException>(() => unknown = target.DoCommandAsync<string>("key/gen", default).Result);
         }
     }
 }
