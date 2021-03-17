@@ -34,6 +34,42 @@ namespace Ipfs.Http
       private static readonly object _lockObject = new object();
       private static HttpClient _api = null;
 
+      /// <summary>
+      ///   Throws an <see cref="HttpRequestException"/> if the response
+      ///   does not indicate success.
+      /// </summary>
+      /// <param name="response"></param>
+      /// <returns>
+      ///    <b>true</b>
+      /// </returns>
+      /// <remarks>
+      ///   The API server returns an JSON error in the form <c>{ "Message": "...", "Code": ... }</c>.
+      /// </remarks>
+      private async Task<bool> ThrowOnErrorAsync( HttpResponseMessage response )
+      {
+         if( response.IsSuccessStatusCode )
+            return true;
+         if( response.StatusCode == HttpStatusCode.NotFound )
+         {
+            var error = "Invalid IPFS command: " + response.RequestMessage.RequestUri.ToString();
+            if( _log.IsDebugEnabled )
+               _log.Debug( "ERR " + error );
+            throw new HttpRequestException( error );
+         }
+
+         var body = await response.Content.ReadAsStringAsync();
+         if( _log.IsDebugEnabled )
+            _log.Debug( "ERR " + body );
+         string message = body;
+         try
+         {
+            var res = JsonConvert.DeserializeObject<dynamic>( body );
+            message = (string)res.Message;
+         }
+         catch { }
+         throw new HttpRequestException( message );
+      }
+
       private static string CreateCommand( string command, string arg, string[] options )
       {
          var url = "/api/v0/" + command;
@@ -56,7 +92,7 @@ namespace Ipfs.Http
             {
                q.Append( option.Substring( 0, i ) );
                q.Append( '=' );
-               q.Append( WebUtility.UrlEncode( option.Substring( i + 1 ) ) );
+               q.Append( WebUtility.UrlEncode( option[( i + 1 )..] ) );
             }
          }
 
@@ -75,9 +111,29 @@ namespace Ipfs.Http
          string arg = null,
          params string[] options )
          => new Uri( ApiUri, CreateCommand( command, arg, options ) );
- 
+
+      private static MultipartFormDataContent GetMultipartFormDataContent( 
+         Stream data, string name = UNKNOWN_FILENAME )
+      {
+         var content = new MultipartFormDataContent();
+         var streamContent = new StreamContent( data );
+         streamContent.Headers.ContentType = new MediaTypeHeaderValue( "application/octet-stream" );
+         content.Add( streamContent, "file", name );
+         return content;
+      }
+
+      private static MultipartFormDataContent GetMultipartFormDataContent(
+         byte[] data, string name = UNKNOWN_FILENAME )
+      {
+         var content = new MultipartFormDataContent();
+         var streamContent = new ByteArrayContent( data );
+         streamContent.Headers.ContentType = new MediaTypeHeaderValue( "application/octet-stream" );
+         content.Add( streamContent, "file", name );
+         return content;
+      }
+
       /// <summary>
-      ///   Get the IPFS API.
+      ///  Get the IPFS API.
       /// </summary>
       /// <returns>
       ///   A <see cref="HttpClient"/>.
@@ -85,7 +141,7 @@ namespace Ipfs.Http
       /// <remarks>
       ///   Only one client is needed.  Its thread safe.
       /// </remarks>
-      private HttpClient Api()
+      private HttpClient GetApiClient()
       {
          if( _api != null ) return _api;
          lock( _lockObject )
@@ -98,7 +154,7 @@ namespace Ipfs.Http
 
             _api = new HttpClient( handler )
             {
-               Timeout = System.Threading.Timeout.InfiniteTimeSpan
+               Timeout = Timeout.InfiniteTimeSpan
             };
             _api.DefaultRequestHeaders.Add( "User-Agent", UserAgent );
          }
@@ -106,20 +162,22 @@ namespace Ipfs.Http
          return _api;
       }
 
-      #endregion
+		#endregion
 
-      /// <summary>
-      ///   Creates a new instance of the <see cref="IpfsClient"/> class and sets the
-      ///   default values.
-      /// </summary>
-      /// <param name="host">
-      ///   The URL of the API host. For example "http://localhost:5001" or "http://ipv4.fiddler:5001".
-      /// </param>
-      /// <remarks>
-      ///   All methods of IpfsClient are thread safe.  Typically, only one instance is required for
-      ///   an application.
-      /// </remarks>
-      public IpfsClient( string host = "http://localhost:5001" )
+		#region Constructor
+
+		/// <summary>
+		///   Creates a new instance of the <see cref="IpfsClient"/> class and sets the
+		///   default values.
+		/// </summary>
+		/// <param name="host">
+		///   The URL of the API host. For example "http://localhost:5001" or "http://ipv4.fiddler:5001".
+		/// </param>
+		/// <remarks>
+		///   All methods of IpfsClient are thread safe.  Typically, only one instance is required for
+		///   an application.
+		/// </remarks>
+		public IpfsClient( string host = "http://localhost:5001" )
       {
          ApiUri = new Uri( host );
 
@@ -145,6 +203,8 @@ namespace Ipfs.Http
          Dns = new DnsApi( this );
          Stats = new StatApi( this );
       }
+
+      #endregion
 
       #region Properties
 
@@ -223,6 +283,131 @@ namespace Ipfs.Http
 
       #endregion
 
+      #region Internal
+
+      internal async Task DoCommandAsync( Uri url, CancellationToken cancel )
+      {
+         if( _log.IsDebugEnabled )
+            _log.Debug( "POST " + url.ToString() );
+         using var response = await GetApiClient().PostAsync( url, null, cancel );
+         await ThrowOnErrorAsync( response );
+         var body = await response.Content.ReadAsStringAsync();
+         if( _log.IsDebugEnabled )
+            _log.Debug( "RSP " + body );
+         return;
+      }
+
+      /// <summary>
+      ///   Perform an <see href="https://ipfs.io/docs/api/">IPFS API command</see> that
+      ///   requires uploading of a "file".
+      /// </summary>
+      /// <param name="command">
+      ///   The <see href="https://ipfs.io/docs/api/">IPFS API command</see>, such as
+      ///   <see href="https://ipfs.io/docs/api/#apiv0add">"add"</see>.
+      /// </param>
+      /// <param name="cancel">
+      ///   Is used to stop the task.  When cancelled, the <see cref="TaskCanceledException"/> is raised.
+      /// </param>
+      /// <param name="data">
+      ///   A <see cref="Stream"/> containing the data to upload.
+      /// </param>
+      /// <param name="name">
+      ///   The name associated with the <paramref name="data"/>, can be <b>null</b>.
+      ///   Typically a filename, such as "hello.txt".
+      /// </param>
+      /// <param name="options">
+      ///   The optional flags to the command.
+      /// </param>
+      /// <returns>
+      ///   A task that represents the asynchronous operation. The task's value is 
+      ///   the HTTP response as a string.
+      /// </returns>
+      /// <exception cref="HttpRequestException">
+      ///   When the IPFS server indicates an error.
+      /// </exception>
+      internal async Task<string> UploadAsync(
+         string command,
+         CancellationToken cancel,
+         Stream data,
+         string name,
+         params string[] options )
+      {
+         var content = GetMultipartFormDataContent( data, name );
+         var url = BuildCommand( command, null, options );
+         if( _log.IsDebugEnabled )
+            _log.Debug( "POST " + url.ToString() );
+         using var response = await GetApiClient().PostAsync( url, content, cancel );
+         await ThrowOnErrorAsync( response );
+         var json = await response.Content.ReadAsStringAsync();
+         if( _log.IsDebugEnabled )
+            _log.Debug( "RSP " + json );
+         return json;
+      }
+
+      /// <summary>
+      ///   Perform an <see href="https://ipfs.io/docs/api/">IPFS API command</see> that
+      ///   requires uploading of a "file".
+      /// </summary>
+      /// <param name="command">
+      ///   The <see href="https://ipfs.io/docs/api/">IPFS API command</see>, such as
+      ///   <see href="https://ipfs.io/docs/api/#apiv0add">"add"</see>.
+      /// </param>
+      /// <param name="cancel">
+      ///   Is used to stop the task.  When cancelled, the <see cref="TaskCanceledException"/> is raised.
+      /// </param>
+      /// <param name="data">
+      ///   A <see cref="Stream"/> containing the data to upload.
+      /// </param>
+      /// <param name="name">
+      ///   The name associated with the <paramref name="data"/>, can be <b>null</b>.
+      ///   Typically a filename, such as "hello.txt".
+      /// </param>
+      /// <param name="options">
+      ///   The optional flags to the command.
+      /// </param>
+      /// <returns>
+      ///   A task that represents the asynchronous operation. The task's value is 
+      ///   the HTTP response as a <see cref="Stream"/>.
+      /// </returns>
+      /// <exception cref="HttpRequestException">
+      ///   When the IPFS server indicates an error.
+      /// </exception>
+      internal async Task<Stream> Upload2Async(
+         string command,
+         CancellationToken cancel,
+         Stream data,
+         string name,
+         params string[] options )
+		{
+			var content = GetMultipartFormDataContent( data, name );
+			var url = BuildCommand( command, null, options );
+			if( _log.IsDebugEnabled )
+				_log.Debug( "POST " + url.ToString() );
+			var response = await GetApiClient().PostAsync( url, content, cancel );
+			await ThrowOnErrorAsync( response );
+			return await response.Content.ReadAsStreamAsync();
+		}
+
+		/// <summary>
+		///  TODO
+		/// </summary>
+		internal async Task<string> UploadAsync(
+         string command,
+         CancellationToken cancel,
+         byte[] data,
+         params string[] options )
+      {
+         var content = GetMultipartFormDataContent( data );
+         var url = BuildCommand( command, null, options );
+         if( _log.IsDebugEnabled )
+            _log.Debug( "POST " + url.ToString() );
+         using var response = await GetApiClient().PostAsync( url, content, cancel );
+         await ThrowOnErrorAsync( response );
+         var json = await response.Content.ReadAsStringAsync();
+         if( _log.IsDebugEnabled )
+            _log.Debug( "RSP " + json );
+         return json;
+      }
 
       /// <summary>
       ///  Perform an <see href="https://ipfs.io/docs/api/">IPFS API command</see> returning a string.
@@ -246,29 +431,17 @@ namespace Ipfs.Http
       /// <exception cref="HttpRequestException">
       ///   When the IPFS server indicates an error.
       /// </exception>
-      public async Task<string> DoCommandAsync( string command, CancellationToken cancel, string arg = null, params string[] options )
+      internal async Task<string> DoCommandAsync( string command, CancellationToken cancel, string arg = null, params string[] options )
       {
          var url = BuildCommand( command, arg, options );
          if( _log.IsDebugEnabled )
             _log.Debug( "POST " + url.ToString() );
-         using var response = await Api().PostAsync( url, null, cancel );
+         using var response = await GetApiClient().PostAsync( url, null, cancel );
          await ThrowOnErrorAsync( response );
          var body = await response.Content.ReadAsStringAsync();
          if( _log.IsDebugEnabled )
             _log.Debug( "RSP " + body );
          return body;
-      }
-
-      internal async Task DoCommandAsync( Uri url, CancellationToken cancel )
-      {
-         if( _log.IsDebugEnabled )
-            _log.Debug( "POST " + url.ToString() );
-         using var response = await Api().PostAsync( url, null, cancel );
-         await ThrowOnErrorAsync( response );
-         var body = await response.Content.ReadAsStringAsync();
-         if( _log.IsDebugEnabled )
-            _log.Debug( "RSP " + body );
-         return;
       }
 
       /// <summary>
@@ -329,14 +502,14 @@ namespace Ipfs.Http
       /// <exception cref="HttpRequestException">
       ///   When the IPFS server indicates an error.
       /// </exception>
-      public async Task<Stream> PostDownloadAsync( string command, CancellationToken cancel, string arg = null, params string[] options )
+      internal async Task<Stream> PostDownloadAsync( string command, CancellationToken cancel, string arg = null, params string[] options )
       {
          var url = BuildCommand( command, arg, options );
          if( _log.IsDebugEnabled )
             _log.Debug( "POST " + url.ToString() );
          var request = new HttpRequestMessage( HttpMethod.Post, url );
 
-         var response = await Api().SendAsync( request, HttpCompletionOption.ResponseHeadersRead, cancel );
+         var response = await GetApiClient().SendAsync( request, HttpCompletionOption.ResponseHeadersRead, cancel );
          await ThrowOnErrorAsync( response );
          return await response.Content.ReadAsStreamAsync();
       }
@@ -364,12 +537,16 @@ namespace Ipfs.Http
       /// <exception cref="HttpRequestException">
       ///   When the IPFS server indicates an error.
       /// </exception>
-      public async Task<Stream> DownloadAsync( string command, CancellationToken cancel, string arg = null, params string[] options )
+      internal async Task<Stream> DownloadAsync( 
+         string command, 
+         CancellationToken cancel, 
+         string arg = null, 
+         params string[] options )
       {
          var url = BuildCommand( command, arg, options );
          if( _log.IsDebugEnabled )
             _log.Debug( "GET " + url.ToString() );
-         var response = await Api().GetAsync( url, HttpCompletionOption.ResponseHeadersRead, cancel );
+         var response = await GetApiClient().GetAsync( url, HttpCompletionOption.ResponseHeadersRead, cancel );
          await ThrowOnErrorAsync( response );
          return await response.Content.ReadAsStreamAsync();
       }
@@ -397,179 +574,21 @@ namespace Ipfs.Http
       /// <exception cref="HttpRequestException">
       ///   When the IPFS server indicates an error.
       /// </exception>
-      public async Task<byte[]> DownloadBytesAsync( string command, CancellationToken cancel, string arg = null, params string[] options )
+      internal async Task<byte[]> DownloadBytesAsync( 
+         string command, 
+         CancellationToken cancel, 
+         string arg = null, 
+         params string[] options )
       {
          var url = BuildCommand( command, arg, options );
          if( _log.IsDebugEnabled )
             _log.Debug( "GET " + url.ToString() );
-         var response = await Api().GetAsync( url, HttpCompletionOption.ResponseHeadersRead, cancel );
+         var response = await GetApiClient().GetAsync( url, HttpCompletionOption.ResponseHeadersRead, cancel );
          await ThrowOnErrorAsync( response );
          return await response.Content.ReadAsByteArrayAsync();
       }
 
-      /// <summary>
-      ///   Perform an <see href="https://ipfs.io/docs/api/">IPFS API command</see> that
-      ///   requires uploading of a "file".
-      /// </summary>
-      /// <param name="command">
-      ///   The <see href="https://ipfs.io/docs/api/">IPFS API command</see>, such as
-      ///   <see href="https://ipfs.io/docs/api/#apiv0add">"add"</see>.
-      /// </param>
-      /// <param name="cancel">
-      ///   Is used to stop the task.  When cancelled, the <see cref="TaskCanceledException"/> is raised.
-      /// </param>
-      /// <param name="data">
-      ///   A <see cref="Stream"/> containing the data to upload.
-      /// </param>
-      /// <param name="name">
-      ///   The name associated with the <paramref name="data"/>, can be <b>null</b>.
-      ///   Typically a filename, such as "hello.txt".
-      /// </param>
-      /// <param name="options">
-      ///   The optional flags to the command.
-      /// </param>
-      /// <returns>
-      ///   A task that represents the asynchronous operation. The task's value is 
-      ///   the HTTP response as a string.
-      /// </returns>
-      /// <exception cref="HttpRequestException">
-      ///   When the IPFS server indicates an error.
-      /// </exception>
-      public async Task<string> UploadAsync( 
-         string command, 
-         CancellationToken cancel, 
-         Stream data, 
-         string name, 
-         params string[] options )
-      {
-         var content = new MultipartFormDataContent();
-         var streamContent = new StreamContent( data );
-         streamContent.Headers.ContentType = new MediaTypeHeaderValue( "application/octet-stream" );
-         if( string.IsNullOrEmpty( name ) )
-            content.Add( streamContent, "file", UNKNOWN_FILENAME );
-         else
-            content.Add( streamContent, "file", name );
-
-         var url = BuildCommand( command, null, options );
-         if( _log.IsDebugEnabled )
-            _log.Debug( "POST " + url.ToString() );
-			using var response = await Api().PostAsync( url, content, cancel );
-			await ThrowOnErrorAsync( response );
-			var json = await response.Content.ReadAsStringAsync();
-			if( _log.IsDebugEnabled )
-				_log.Debug( "RSP " + json );
-			return json;
-		}
-      /// <summary>
-      ///   Perform an <see href="https://ipfs.io/docs/api/">IPFS API command</see> that
-      ///   requires uploading of a "file".
-      /// </summary>
-      /// <param name="command">
-      ///   The <see href="https://ipfs.io/docs/api/">IPFS API command</see>, such as
-      ///   <see href="https://ipfs.io/docs/api/#apiv0add">"add"</see>.
-      /// </param>
-      /// <param name="cancel">
-      ///   Is used to stop the task.  When cancelled, the <see cref="TaskCanceledException"/> is raised.
-      /// </param>
-      /// <param name="data">
-      ///   A <see cref="Stream"/> containing the data to upload.
-      /// </param>
-      /// <param name="name">
-      ///   The name associated with the <paramref name="data"/>, can be <b>null</b>.
-      ///   Typically a filename, such as "hello.txt".
-      /// </param>
-      /// <param name="options">
-      ///   The optional flags to the command.
-      /// </param>
-      /// <returns>
-      ///   A task that represents the asynchronous operation. The task's value is 
-      ///   the HTTP response as a <see cref="Stream"/>.
-      /// </returns>
-      /// <exception cref="HttpRequestException">
-      ///   When the IPFS server indicates an error.
-      /// </exception>
-      public async Task<Stream> Upload2Async( 
-         string command, 
-         CancellationToken cancel, 
-         Stream data, 
-         string name, 
-         params string[] options )
-      {
-         var content = new MultipartFormDataContent();
-         var streamContent = new StreamContent( data );
-         streamContent.Headers.ContentType = new MediaTypeHeaderValue( "application/octet-stream" );
-         content.Add( streamContent, "file", string.IsNullOrEmpty( name ) 
-            ? UNKNOWN_FILENAME 
-            : name );
-
-         var url = BuildCommand( command, null, options );
-         if( _log.IsDebugEnabled )
-            _log.Debug( "POST " + url.ToString() );
-         var response = await Api().PostAsync( url, content, cancel );
-         await ThrowOnErrorAsync( response );
-         return await response.Content.ReadAsStreamAsync();
-      }
-
-      /// <summary>
-      ///  TODO
-      /// </summary>
-      public async Task<string> UploadAsync( 
-         string command, 
-         CancellationToken cancel, 
-         byte[] data, 
-         params string[] options )
-      {
-         var content = new MultipartFormDataContent();
-         var streamContent = new ByteArrayContent( data );
-         streamContent.Headers.ContentType = new MediaTypeHeaderValue( "application/octet-stream" );
-         content.Add( streamContent, "file", UNKNOWN_FILENAME );
-
-         var url = BuildCommand( command, null, options );
-         if( _log.IsDebugEnabled )
-            _log.Debug( "POST " + url.ToString() );
-			using var response = await Api().PostAsync( url, content, cancel );
-			await ThrowOnErrorAsync( response );
-			var json = await response.Content.ReadAsStringAsync();
-			if( _log.IsDebugEnabled )
-				_log.Debug( "RSP " + json );
-			return json;
-		}
-
-      /// <summary>
-      ///   Throws an <see cref="HttpRequestException"/> if the response
-      ///   does not indicate success.
-      /// </summary>
-      /// <param name="response"></param>
-      /// <returns>
-      ///    <b>true</b>
-      /// </returns>
-      /// <remarks>
-      ///   The API server returns an JSON error in the form <c>{ "Message": "...", "Code": ... }</c>.
-      /// </remarks>
-      async Task<bool> ThrowOnErrorAsync( HttpResponseMessage response )
-      {
-         if( response.IsSuccessStatusCode )
-            return true;
-         if( response.StatusCode == HttpStatusCode.NotFound )
-         {
-            var error = "Invalid IPFS command: " + response.RequestMessage.RequestUri.ToString();
-            if( _log.IsDebugEnabled )
-               _log.Debug( "ERR " + error );
-            throw new HttpRequestException( error );
-         }
-
-         var body = await response.Content.ReadAsStringAsync();
-         if( _log.IsDebugEnabled )
-            _log.Debug( "ERR " + body );
-         string message = body;
-         try
-         {
-            var res = JsonConvert.DeserializeObject<dynamic>( body );
-            message = (string)res.Message;
-         }
-         catch { }
-         throw new HttpRequestException( message );
-      }
+      #endregion
 
    }
 }

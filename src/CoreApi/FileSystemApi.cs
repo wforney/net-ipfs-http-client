@@ -12,7 +12,6 @@ using Ipfs.CoreApi;
 
 namespace Ipfs.Http
 {
-
    class FileSystemApi : BaseApi, IFileSystemApi
    {
       static readonly ILog log = LogManager.GetLogger<FileSystemApi>();
@@ -21,17 +20,27 @@ namespace Ipfs.Http
       internal FileSystemApi( IpfsClient ipfs ) : base( ipfs )
          => _emptyFolder = new Lazy<DagNode>( () => ipfs.Object.NewDirectoryAsync().Result );
 
-      public async Task<IFileSystemNode> AddFileAsync( string path, AddFileOptions options = null, CancellationToken cancel = default( CancellationToken ) )
+      public async Task<IFileSystemNode> AddFileAsync( 
+         string path, 
+         AddFileOptions options = null, 
+         CancellationToken cancel = default )
       {
          using var stream = new FileStream( path, FileMode.Open, FileAccess.Read, FileShare.Read );
          var node = await AddAsync( stream, Path.GetFileName( path ), options, cancel );
          return node;
       }
 
-      public Task<IFileSystemNode> AddTextAsync( string text, AddFileOptions options = null, CancellationToken cancel = default( CancellationToken ) )
+      public Task<IFileSystemNode> AddTextAsync( 
+         string text, 
+         AddFileOptions options = null,
+         CancellationToken cancel = default )
       => AddAsync( new MemoryStream( Encoding.UTF8.GetBytes( text ), false ), "", options, cancel );
 
-      public async Task<IFileSystemNode> AddAsync( Stream stream, string name = "", AddFileOptions options = null, CancellationToken cancel = default( CancellationToken ) )
+      public async Task<IFileSystemNode> AddAsync( 
+         Stream stream, 
+         string name = "", 
+         AddFileOptions options = null, 
+         CancellationToken cancel = default )
       {
          if( options == null )
             options = new AddFileOptions();
@@ -166,13 +175,14 @@ namespace Ipfs.Http
       /// <returns>
       ///   The contents of the <paramref name="path"/> as a <see cref="string"/>.
       /// </returns>
-      public async Task<String> ReadAllTextAsync( string path, CancellationToken cancel = default( CancellationToken ) )
+      public async Task<string> ReadAllTextAsync( 
+         string path, 
+         CancellationToken cancel = default )
       {
          using var data = await ReadFileAsync( path, cancel );
          using var text = new StreamReader( data );
          return await text.ReadToEndAsync();
       }
-
 
       /// <summary>
       ///   Opens an existing IPFS file for reading.
@@ -187,10 +197,16 @@ namespace Ipfs.Http
       /// <returns>
       ///   A <see cref="Stream"/> to the file contents.
       /// </returns>
-      public Task<Stream> ReadFileAsync( string path, CancellationToken cancel = default( CancellationToken ) )
+      public Task<Stream> ReadFileAsync( 
+         string path, 
+         CancellationToken cancel = default )
       => Client.DownloadAsync( "cat", cancel, path );
 
-      public Task<Stream> ReadFileAsync( string path, long offset, long length = 0, CancellationToken cancel = default( CancellationToken ) )
+      public Task<Stream> ReadFileAsync( 
+         string path, 
+         long offset, 
+         long length = 0, 
+         CancellationToken cancel = default )
       {
          // https://github.com/ipfs/go-ipfs/issues/5380
          if( offset > int.MaxValue )
@@ -216,7 +232,9 @@ namespace Ipfs.Http
       ///   Is used to stop the task.  When cancelled, the <see cref="TaskCanceledException"/> is raised.
       /// </param>
       /// <returns></returns>
-      public async Task<IFileSystemNode> ListFileAsync( string path, CancellationToken cancel = default( CancellationToken ) )
+      public async Task<IFileSystemNode> ListFileAsync( 
+         string path, 
+         CancellationToken cancel = default )
       {
          var json = await Client.DoCommandAsync( "file/ls", cancel, path );
          var r = JObject.Parse( json );
@@ -246,7 +264,10 @@ namespace Ipfs.Http
          return node;
       }
 
-      public Task<Stream> GetAsync( string path, bool compress = false, CancellationToken cancel = default( CancellationToken ) )
+      public Task<Stream> GetAsync( 
+         string path, 
+         bool compress = false, 
+         CancellationToken cancel = default )
       => Client.DownloadAsync( "get", cancel, path, $"compress={compress}" );
    }
 }
