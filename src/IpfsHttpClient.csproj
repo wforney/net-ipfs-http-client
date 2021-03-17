@@ -9,31 +9,30 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 
     <!-- developer build is always 0.42 -->
-    <AssemblyVersion>0.42</AssemblyVersion>
-    <Version>0.42</Version>
+    <AssemblyVersion>0.51</AssemblyVersion>
+    <Version>0.51</Version>
     
     <!-- Nuget specs -->
-    <PackageId>Ipfs.Http.Client</PackageId>
-    <Authors>Richard Schneider</Authors>
+    <PackageId>WickedByte.Ipfs.Http.Client</PackageId>
+    <Authors>Marshall Rosenstein</Authors>
     <Title>IPFS HTTP Client</Title>
-    <Description> Provides .Net client access to the InterPlanetary File System.</Description>
+    <Description>.NET standard 2.1 fork of Richard Schneider's Ipfs.Http.Client. Provides .Net client access to the InterPlanetary File System.</Description>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageReleaseNotes>https://github.com/richardschneider/net-ipfs-http-client/releases</PackageReleaseNotes>
     <Copyright>© 2015-2019 Richard Schneider</Copyright>
     <PackageTags>ipfs peer-to-peer distributed file-system</PackageTags>
     <IncludeSymbols>True</IncludeSymbols>
     <PackageProjectUrl>https://github.com/richardschneider/net-ipfs-http-client</PackageProjectUrl>
-    <PackageIconUrl>https://raw.githubusercontent.com/richardschneider/net-ipfs-core/master/doc/images/ipfs-cs-logo-64x64.png</PackageIconUrl>
+    <Company>WickedByte, LLC</Company>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
 	  <PackageReference Include="System.Net.Http" Version="4.3.3" Condition="'$(TargetFramework)' == 'netstandard14'" />
     <PackageReference Include="System.Net.Http" Version="4.3.3" Condition="'$(TargetFramework)' == 'net45'" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Ipfs.Core\IpfsCore.csproj" />
+    <PackageReference Include="WickedByte.Ipfs.Core" Version="0.50.0" />
   </ItemGroup>
  
 </Project>

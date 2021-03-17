@@ -12,22 +12,16 @@
     <Version>0.50</Version>
 
     <!-- Nuget specs -->
-    <PackageId>Ipfs.Core</PackageId>
-    <Authors>Richard Schneider</Authors>
+    <PackageId>WickedByte.Ipfs.Core</PackageId>
+    <Authors>Marshall Rosenstein</Authors>
     <Title>IPFS Core Objects</Title>
-    <Description>
-      Core objects and interfaces for IPFS.
-
-      The InterPlanetary File System is the permanent web. It is a new hypermedia distribution protocol, addressed by content and identities. IPFS enables the creation of completely distributed applications. It aims to make the web faster, safer, and more open.
-    </Description>
+    <Description>Fork of Ipfs.Core by Richard Schneider.</Description>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <PackageReleaseNotes>https://github.com/richardschneider/net-ipfs-core/releases</PackageReleaseNotes>
+    <PackageReleaseNotes></PackageReleaseNotes>
     <Copyright>© 2015-2019 Richard Schneider</Copyright>
     <PackageTags>ipfs peer-to-peer distributed file-system</PackageTags>
     <IncludeSymbols>True</IncludeSymbols>
-    <PackageProjectUrl>https://github.com/richardschneider/net-ipfs-core</PackageProjectUrl>
-    <PackageIconUrl>https://raw.githubusercontent.com/richardschneider/net-ipfs-core/master/doc/images/ipfs-cs-logo-64x64.png</PackageIconUrl>
-
+    <PackageProjectUrl>https://richardschneider.github.io/net-ipfs-core/</PackageProjectUrl>
     <GeneratePackageOnBuild Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
@@ -42,6 +36,10 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <AllowedOutputExtensionsInPackageBuildOutputFolder>.pdb;$(AllowedOutputExtensionsInPackageBuildOutputFolder)</AllowedOutputExtensionsInPackageBuildOutputFolder>
     <FileVersion>0.50.0.0</FileVersion>
+    <Company>WickedByte, LLC</Company>
+    <RepositoryUrl>https://github.com/marshallr12/net-ipfs-core</RepositoryUrl>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>
