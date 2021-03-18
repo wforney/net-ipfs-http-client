@@ -25,7 +25,7 @@ namespace Ipfs.CoreApi
         ///   A task that represents the asynchronous operation that returns
         ///   the <see cref="Peer"/> information or a closer peer.
         /// </returns>
-        Task<Peer> FindPeerAsync(MultiHash id, CancellationToken cancel = default(CancellationToken));
+        Task<Peer> FindPeerAsync(MultiHash id, CancellationToken cancel = default);
 
     }
 }
