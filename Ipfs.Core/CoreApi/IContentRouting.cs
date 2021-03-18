@@ -32,7 +32,7 @@ namespace Ipfs.CoreApi
         /// <returns>
         ///   A task that represents the asynchronous operation.
         /// </returns>
-        Task ProvideAsync(Cid cid, bool advertise = true, CancellationToken cancel = default(CancellationToken));
+        Task ProvideAsync(Cid cid, bool advertise = true, CancellationToken cancel = default);
 
         /// <summary>
         ///   Find the providers for the specified content.
@@ -57,6 +57,6 @@ namespace Ipfs.CoreApi
             Cid id,
             int limit = 20,
             Action<Peer> providerFound = null,
-            CancellationToken cancel = default(CancellationToken));
+            CancellationToken cancel = default);
     }
 }
