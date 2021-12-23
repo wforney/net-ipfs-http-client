@@ -42,7 +42,7 @@ namespace Ipfs.Http
       {
          var url = new StringBuilder();
          url.Append( "/api/v0/pubsub/pub" );
-         url.Append( "?arg=" );
+         url.Append( "?arg=u" );
             url.Append(Multibase.Encode(MultibaseEncoding.Base64Url, Encoding.UTF8.GetBytes(topic)));
 
             return ipfs.DoCommandAsync(new Uri(ipfs.ApiUri, url.ToString()), message, cancel);
@@ -52,7 +52,7 @@ namespace Ipfs.Http
         {
             var url = new StringBuilder();
             url.Append("/api/v0/pubsub/pub");
-            url.Append("?arg=");
+            url.Append("?arg=u");
             url.Append(Multibase.Encode(MultibaseEncoding.Base64Url, Encoding.UTF8.GetBytes(topic)));
 
             return ipfs.DoCommandAsync(new Uri(ipfs.ApiUri, url.ToString()), message, cancel);
@@ -62,7 +62,7 @@ namespace Ipfs.Http
         {
             var url = new StringBuilder();
             url.Append("/api/v0/pubsub/pub");
-            url.Append("?arg=");
+            url.Append("?arg=u");
             url.Append(Multibase.Encode(MultibaseEncoding.Base64Url, Encoding.UTF8.GetBytes(topic)));
 
             await ipfs.DoCommandAsync(new Uri(ipfs.ApiUri, url.ToString()), message, cancel);
