@@ -10,14 +10,14 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 
     <!-- developer build is always 0.42 -->
-    <AssemblyVersion>0.52</AssemblyVersion>
-    <Version>0.52</Version>
+    <AssemblyVersion>0.56</AssemblyVersion>
+    <Version>0.56</Version>
     
     <!-- Nuget specs -->
     <PackageId>Ipfs.Http.Client</PackageId>
     <Authors>Richard Schneider, Marshall Rosenstein</Authors>
     <Title>IPFS HTTP Client</Title>
-    <Description>.NET standard 2.1 fork of Richard Schneider's Ipfs.Http.Client. Provides .Net client access to the InterPlanetary File System.</Description>
+    <Description> Provides .Net client access to the InterPlanetary File System.</Description>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageReleaseNotes>https://github.com/richardschneider/net-ipfs-http-client/releases</PackageReleaseNotes>
     <Copyright>© 2015-2019 Richard Schneider</Copyright>
@@ -27,6 +27,7 @@
     <Company>WickedByte, LLC</Company>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageIconUrl>https://raw.githubusercontent.com/richardschneider/net-ipfs-core/master/doc/images/ipfs-cs-logo-64x64.png</PackageIconUrl>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard14|AnyCPU'">
@@ -54,14 +55,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Ipfs.Core" Version="0.55.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 	  <PackageReference Include="System.Net.Http" Version="4.3.3" Condition="'$(TargetFramework)' == 'netstandard14'" />
     <PackageReference Include="System.Net.Http" Version="4.3.3" Condition="'$(TargetFramework)' == 'net45'" />
-    <PackageReference Include="WickedByte.Ipfs.Core" Version="0.50.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\net-ipfs-core\src\IpfsCore.csproj" />
   </ItemGroup>
  
 </Project>
