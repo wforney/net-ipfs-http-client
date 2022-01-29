@@ -649,7 +649,7 @@ namespace Ipfs.Http
         ///   The environment variable "IpfsHttpApi" overrides this value.
         /// </remarks>
         public static Uri DefaultApiUri = new Uri(
-            Environment.GetEnvironmentVariable("IpfsHttpApi") 
+            Environment.GetEnvironmentVariable("IpfsHttpApi")
             ?? "http://localhost:5001");
 
         /// <summary>
@@ -699,7 +699,7 @@ namespace Ipfs.Http
         {
             ApiUri = new Uri(host);
         }
-        
+
         /// <summary>
         ///   The URL to the IPFS API server.  The default is "http://localhost:5001".
         /// </summary>
@@ -808,7 +808,42 @@ namespace Ipfs.Http
 
             return new Uri(ApiUri, url);
         }
+        Uri BuildCommand(string command, string host, string arg = null, params string[] options)
+        {
+            var url = "/api/v0/" + command;
+            var q = new StringBuilder();
+            if (arg != null)
+            {
+                q.Append("&arg=");
+                q.Append(WebUtility.UrlEncode(arg));
+            }
 
+            foreach (var option in options)
+            {
+                q.Append('&');
+                var i = option.IndexOf('=');
+                if (i < 0)
+                {
+                    q.Append(option);
+                }
+                else
+                {
+                    q.Append(option.Substring(0, i));
+                    q.Append('=');
+                    q.Append(WebUtility.UrlEncode(option.Substring(i + 1)));
+                }
+            }
+
+            if (q.Length > 0)
+            {
+                q[0] = '?';
+                q.Insert(0, url);
+                url = q.ToString();
+            }
+
+            var apiUri = new Uri(host);
+            return new Uri(apiUri, url);
+        }
         /// <summary>
         ///   Get the IPFS API.
         /// </summary>
@@ -964,10 +999,8 @@ namespace Ipfs.Http
             await ThrowOnErrorAsync(response);
             return await response.Content.ReadAsStreamAsync();
         }
-
         /// <summary>
-        ///  Perform an <see href="https://ipfs.io/docs/api/">IPFS API command</see> returning a
-        ///  <see cref="Stream"/>.
+        ///  Post an <see href="https://ipfs.io/docs/api/">IPFS API command</see> returning a stream.
         /// </summary>
         /// <param name="command">
         ///   The <see href="https://ipfs.io/docs/api/">IPFS API command</see>, such as
@@ -975,6 +1008,9 @@ namespace Ipfs.Http
         /// </param>
         /// <param name="cancel">
         ///   Is used to stop the task.  When cancelled, the <see cref="TaskCanceledException"/> is raised.
+        /// </param>
+        /// <param name="host">
+        ///   Set a host to override the base ApiUrl
         /// </param>
         /// <param name="arg">
         ///   The optional argument to the command.
@@ -988,15 +1024,18 @@ namespace Ipfs.Http
         /// <exception cref="HttpRequestException">
         ///   When the IPFS server indicates an error.
         /// </exception>
-        public async Task<Stream> DownloadAsync(string command, CancellationToken cancel, string arg = null, params string[] options)
+        public async Task<Stream> PostDownloadCustomHostAsync(string command, string host, CancellationToken cancel, string arg = null, params string[] options)
         {
-            var url = BuildCommand(command, arg, options);
+            var url = BuildCommand(command, host, arg, options);
             if (log.IsDebugEnabled)
-                log.Debug("GET " + url.ToString());
-            var response = await Api().GetAsync(url, HttpCompletionOption.ResponseHeadersRead, cancel);
+                log.Debug("POST " + url.ToString());
+            var request = new HttpRequestMessage(HttpMethod.Post, url);
+
+            var response = await Api().SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancel);
             await ThrowOnErrorAsync(response);
             return await response.Content.ReadAsStreamAsync();
         }
+
 
         /// <summary>
         ///  Perform an <see href="https://ipfs.io/docs/api/">IPFS API command</see> returning a
