@@ -1,6 +1,6 @@
-﻿using System.Runtime.Serialization;
+﻿namespace Ipfs.Http;
 
-namespace Ipfs.Http;
+using System.Runtime.Serialization;
 
 /// <inheritdoc />
 [DataContract]

@@ -184,6 +184,31 @@ namespace Ipfs.Http
          return await text.ReadToEndAsync();
       }
 
+        /// <summary>
+        ///   Reads the content of an existing IPFS file as text.
+        /// </summary>
+        /// <param name="path">
+        ///   A path to an existing file, such as "QmXarR6rgkQ2fDSHjSY5nM2kuCXKYGViky5nohtwgF65Ec/about"
+        ///   or "QmZTR5bcpQD7cFgTorqxZDYaew1Wqgfbd2ud9QqGPAkK2V"
+        /// </param>
+        /// <param name="host">
+        ///   Set a host to override the base ApiUrl
+        /// </param>
+        /// <param name="cancel">
+        ///   Is used to stop the task.  When cancelled, the <see cref="TaskCanceledException"/> is raised.
+        /// </param>
+        /// <returns>
+        ///   The contents of the <paramref name="path"/> as a <see cref="string"/>.
+        /// </returns>
+        public async Task<String> ReadAllTextHostAsync(string path, string host, CancellationToken cancel = default(CancellationToken))
+        {
+            using (var data = await ReadFileHostAsync(path, host, cancel))
+            using (var text = new StreamReader(data))
+            {
+                return await text.ReadToEndAsync();
+            }
+        }
+
       /// <summary>
       ///   Opens an existing IPFS file for reading.
       /// </summary>
@@ -201,6 +226,27 @@ namespace Ipfs.Http
          string path, 
          CancellationToken cancel = default )
       => Client.DownloadAsync( "cat", cancel, path );
+
+        /// <summary>
+        ///   Opens an existing IPFS file for reading.
+        /// </summary>
+        /// <param name="path">
+        ///   A path to an existing file, such as "QmXarR6rgkQ2fDSHjSY5nM2kuCXKYGViky5nohtwgF65Ec/about"
+        ///   or "QmZTR5bcpQD7cFgTorqxZDYaew1Wqgfbd2ud9QqGPAkK2V"
+        /// </param>
+        /// <param name="host">
+        ///   Set a host to override the base ApiUrl
+        /// </param>
+        /// <param name="cancel">
+        ///   Is used to stop the task.  When cancelled, the <see cref="TaskCanceledException"/> is raised.
+        /// </param>
+        /// <returns>
+        ///   A <see cref="Stream"/> to the file contents.
+        /// </returns>
+        public Task<Stream> ReadFileHostAsync(string path, string host, CancellationToken cancel = default(CancellationToken))
+        {
+            return ipfs.PostDownloadCustomHostAsync("cat", host, cancel, path);
+        }
 
       public Task<Stream> ReadFileAsync( 
          string path, 

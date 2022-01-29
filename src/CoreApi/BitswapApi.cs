@@ -1,7 +1,7 @@
-﻿using Newtonsoft.Json.Linq;
-using Ipfs.CoreApi;
+﻿namespace Ipfs.Http;
 
-namespace Ipfs.Http;
+using Newtonsoft.Json.Linq;
+using Ipfs.CoreApi;
 
 class BitswapApi : BaseApi, IBitswapApi
 {
@@ -43,4 +43,3 @@ class BitswapApi : BaseApi, IBitswapApi
      };
   }
 }
-
