@@ -18,5 +18,4 @@
     <ProjectReference Include="..\src\IpfsHttpClient.csproj" />
   </ItemGroup>
 
-
 </Project>
