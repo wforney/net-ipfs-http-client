@@ -1,70 +1,71 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
-    <AssemblyName>Ipfs.Core</AssemblyName>
-    <RootNamespace>Ipfs</RootNamespace>
-    <DebugType>portable</DebugType>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<AssemblyName>Ipfs.Core</AssemblyName>
+		<RootNamespace>Ipfs</RootNamespace>
+		<DebugType>portable</DebugType>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 
-    <!-- developer build is always 0.42 -->
-    <AssemblyVersion>0.50</AssemblyVersion>
-    <Version>0.50</Version>
+		<!-- developer build is always 0.42 -->
+		<AssemblyVersion>0.50</AssemblyVersion>
+		<Version>0.50</Version>
 
-    <!-- Nuget specs -->
-    <PackageId>WickedByte.Ipfs.Core</PackageId>
-    <Authors>Marshall Rosenstein</Authors>
-    <Title>IPFS Core Objects</Title>
-    <Description>Fork of Ipfs.Core by Richard Schneider.</Description>
-    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <PackageReleaseNotes></PackageReleaseNotes>
-    <Copyright>© 2015-2019 Richard Schneider</Copyright>
-    <PackageTags>ipfs peer-to-peer distributed file-system</PackageTags>
-    <IncludeSymbols>True</IncludeSymbols>
-    <PackageProjectUrl>https://richardschneider.github.io/net-ipfs-core/</PackageProjectUrl>
-    <GeneratePackageOnBuild Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-  </PropertyGroup>
+		<!-- Nuget specs -->
+		<PackageId>WickedByte.Ipfs.Core</PackageId>
+		<Authors>Marshall Rosenstein</Authors>
+		<Title>IPFS Core Objects</Title>
+		<Description>Fork of Ipfs.Core by Richard Schneider.</Description>
+		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+		<PackageReleaseNotes></PackageReleaseNotes>
+		<Copyright>© 2015-2019 Richard Schneider</Copyright>
+		<PackageTags>ipfs peer-to-peer distributed file-system</PackageTags>
+		<IncludeSymbols>True</IncludeSymbols>
+		<PackageProjectUrl>https://richardschneider.github.io/net-ipfs-core/</PackageProjectUrl>
+		<GeneratePackageOnBuild Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+	</PropertyGroup>
 
-  <PropertyGroup>
-    <!-- Optional: Publish the repository URL in the built .nupkg (in the NuSpec <Repository> element) -->
-    <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    <!-- Optional: Embed source files that are not tracked by the source control manager in the PDB -->
-    <EmbedUntrackedSources>false</EmbedUntrackedSources>
-    <!-- Optional: Build symbol package (.snupkg) to distribute the PDB containing Source Link -->
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <AllowedOutputExtensionsInPackageBuildOutputFolder>.pdb;$(AllowedOutputExtensionsInPackageBuildOutputFolder)</AllowedOutputExtensionsInPackageBuildOutputFolder>
-    <FileVersion>0.50.0.0</FileVersion>
-    <Company>WickedByte, LLC</Company>
-    <RepositoryUrl>https://github.com/marshallr12/net-ipfs-core</RepositoryUrl>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-  </PropertyGroup>
+	<PropertyGroup>
+		<!-- Optional: Publish the repository URL in the built .nupkg (in the NuSpec <Repository> element) -->
+		<PublishRepositoryUrl>true</PublishRepositoryUrl>
+		<!-- Optional: Embed source files that are not tracked by the source control manager in the PDB -->
+		<EmbedUntrackedSources>false</EmbedUntrackedSources>
+		<!-- Optional: Build symbol package (.snupkg) to distribute the PDB containing Source Link -->
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<AllowedOutputExtensionsInPackageBuildOutputFolder>.pdb;$(AllowedOutputExtensionsInPackageBuildOutputFolder)</AllowedOutputExtensionsInPackageBuildOutputFolder>
+		<FileVersion>0.50.0.0</FileVersion>
+		<Company>WickedByte, LLC</Company>
+		<RepositoryUrl>https://github.com/marshallr12/net-ipfs-core</RepositoryUrl>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Common.Logging" Version="3.4.1" />
-    <PackageReference Include="Common.Logging.Core" Version="3.4.1" />
-    <PackageReference Include="Google.Protobuf" Version="3.15.6" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="Portable.BouncyCastle" Version="1.8.10" />
-    <PackageReference Include="SimpleBase" Version="3.0.2" />
-    <PackageReference Include="Grpc.Tools" Version="2.36.1" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="16.9.60" PrivateAssets="All" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Common.Logging" Version="3.4.1" />
+		<PackageReference Include="Common.Logging.Core" Version="3.4.1" />
+		<PackageReference Include="Google.Protobuf" Version="3.19.4" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+		<PackageReference Include="Portable.BouncyCastle" Version="1.9.0" />
+		<PackageReference Include="SimpleBase" Version="3.1.0" />
+		<PackageReference Include="Grpc.Tools" Version="2.44.0" PrivateAssets="All" />
+		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
+		<PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.1.46" PrivateAssets="All" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Protobuf Include="**/*.proto" />
-    <EmbeddedResource Include="**/*.proto" />
-  </ItemGroup>
+	<ItemGroup>
+		<Protobuf Include="**/*.proto" />
+		<EmbeddedResource Include="**/*.proto" />
+	</ItemGroup>
 
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard14'">
-    <DefineConstants>NETSTANDARD14</DefineConstants>
-  </PropertyGroup>
+	<PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard14'">
+		<DefineConstants>NETSTANDARD14</DefineConstants>
+	</PropertyGroup>
 
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.0'">
-    <DefineConstants>ASYNCSTREAM</DefineConstants>
-  </PropertyGroup>
+	<PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.0'">
+		<DefineConstants>ASYNCSTREAM</DefineConstants>
+	</PropertyGroup>
 
 </Project>

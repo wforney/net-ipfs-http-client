@@ -78,7 +78,7 @@
             {
                 if (peers == null)
                     Fetch();
-                return peers.Count();
+        return peers.Length;
             }
         }
 

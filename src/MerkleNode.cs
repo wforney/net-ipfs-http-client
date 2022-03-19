@@ -93,8 +93,8 @@
 		[DataMember]
 		public string Name
 		{
-			get { return name; }
-			set { name = value ?? string.Empty; }
+        get => name;
+        set => name = value ?? string.Empty;
 		}
 
 		/// <summary>
@@ -197,7 +197,7 @@
 		///  TODO
 		/// </summary>
 		static public implicit operator MerkleNode(string hash)
-		=> new MerkleNode(hash);
+  => new( hash );
 
 	}
 }
