@@ -27,19 +27,16 @@ namespace Ipfs.Http
 
       internal KeyApi( IpfsClient ipfs ) : base( ipfs ) { }
 
-      public async Task<IKey> CreateAsync( 
-         string name, 
-         string keyType, 
-         int size, 
-         CancellationToken cancel = default )
-      {
-         return await Client.DoCommandAsync<KeyInfo>( "key/gen", cancel,
-             name,
-             $"type={keyType}",
-             $"size={size}" );
-      }
+        public async Task<IKey> CreateAsync(
+           string name,
+           string keyType,
+           int size,
+           CancellationToken cancel = default ) => await Client.DoCommandAsync<KeyInfo>( "key/gen", cancel,
+               name,
+               $"type={keyType}",
+               $"size={size}" );
 
-      public async Task<IEnumerable<IKey>> ListAsync(
+        public async Task<IEnumerable<IKey>> ListAsync(
          CancellationToken cancel = default )
       {
          var json = await Client.DoCommandAsync( "key/list", cancel, null, "l=true" );
