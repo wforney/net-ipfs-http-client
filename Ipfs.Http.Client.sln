@@ -5,6 +5,7 @@ VisualStudioVersion = 17.1.32421.90
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6B9AA9C7-5E90-4D10-9DDE-A2AA5FE3ECA6}"
 	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
 		.gitignore = .gitignore
 		appveyor.yml = appveyor.yml
 		LICENSE = LICENSE
@@ -13,11 +14,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Documentation", "doc\Documentation.csproj", "{F3A32EA9-0B2F-46A3-B47A-33B4C04BD423}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IpfsHttpClient", "src\IpfsHttpClient.csproj", "{F3C81C57-C283-4E07-B765-DEABCFB22136}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ipfs.Http.Client", "src\Ipfs.Http.Client.csproj", "{F3C81C57-C283-4E07-B765-DEABCFB22136}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IpfsHttpClientTests", "test\IpfsHttpClientTests.csproj", "{B459FBC7-4A28-4170-AD83-7348A403407F}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IpfsCore", "Ipfs.Core\IpfsCore.csproj", "{BEC8C415-741B-4E11-B213-5BCAF138C9AD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ipfs.Http.Client.Tests", "test\Ipfs.Http.Client.Tests.csproj", "{B459FBC7-4A28-4170-AD83-7348A403407F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,6 +25,7 @@ Global
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{F3A32EA9-0B2F-46A3-B47A-33B4C04BD423}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3A32EA9-0B2F-46A3-B47A-33B4C04BD423}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F3A32EA9-0B2F-46A3-B47A-33B4C04BD423}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F3C81C57-C283-4E07-B765-DEABCFB22136}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F3C81C57-C283-4E07-B765-DEABCFB22136}.Debug|Any CPU.Build.0 = Debug|Any CPU
@@ -35,10 +35,6 @@ Global
 		{B459FBC7-4A28-4170-AD83-7348A403407F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B459FBC7-4A28-4170-AD83-7348A403407F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B459FBC7-4A28-4170-AD83-7348A403407F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BEC8C415-741B-4E11-B213-5BCAF138C9AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BEC8C415-741B-4E11-B213-5BCAF138C9AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BEC8C415-741B-4E11-B213-5BCAF138C9AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BEC8C415-741B-4E11-B213-5BCAF138C9AD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

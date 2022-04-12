@@ -1,9 +1,11 @@
 ﻿namespace Ipfs.Http;
 
+using System.IO;
 using System.Runtime.Serialization;
 
 /// <inheritdoc />
 [DataContract]
+[Serializable]
 public class Block : IDataBlock
 {
   private long? size;
