@@ -1,32 +1,22 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Newtonsoft.Json.Linq;
-using System;
-using System.Linq;
-using System.Text;
+﻿namespace Ipfs.Http.Client.Tests.CoreApi;
+
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading.Tasks;
 
-namespace Ipfs.Http
+[TestClass]
+public class BlockRepositoryTest
 {
- 
-    [TestClass]
-    public class BlockRepositoryTest
+    [TestMethod]
+    public async Task Stats()
     {
+        var stats = await TestFixture.IpfsContext.BlockRepository.StatisticsAsync();
+        Assert.IsNotNull(stats);
+    }
 
-        [TestMethod]
-        public async Task Stats()
-        {
-            var ipfs = TestFixture.Ipfs;
-            var stats = await ipfs.BlockRepository.StatisticsAsync();
-            Assert.IsNotNull(stats);
-        }
-
-        [TestMethod]
-        public async Task Version()
-        {
-            var ipfs = TestFixture.Ipfs;
-            var version = await ipfs.BlockRepository.VersionAsync();
-            Assert.IsFalse(string.IsNullOrWhiteSpace(version));
-        }
-
+    [TestMethod]
+    public async Task Version()
+    {
+        var version = await TestFixture.IpfsContext.BlockRepository.VersionAsync();
+        Assert.IsFalse(string.IsNullOrWhiteSpace(version));
     }
 }

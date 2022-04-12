@@ -1,199 +1,198 @@
-﻿using System.Runtime.Serialization;
+﻿namespace Ipfs.Http.Client;
 
-namespace Ipfs.Http;
+using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Runtime.Serialization;
 
 /// <summary>
-///   The IPFS <see href="https://github.com/ipfs/specs/tree/master/merkledag">MerkleDag</see> is the datastructure at the heart of IPFS. It is an acyclic directed graph whose edges are hashes.
+/// The IPFS <see href="https://github.com/ipfs/specs/tree/master/merkledag">MerkleDag</see> is the datastructure at the heart of IPFS. It is an acyclic directed graph whose edges are hashes.
 /// </summary>
 /// <remarks>
-///   Initially an <b>MerkleNode</b> is just constructed with its Cid.
+/// Initially an <b>MerkleNode</b> is just constructed with its Cid.
 /// </remarks>
 [DataContract]
 public class MerkleNode : IMerkleNode<IMerkleLink>, IEquatable<MerkleNode>
 {
-  bool hasBlockStats;
-  long blockSize;
-  string name;
-  IEnumerable<IMerkleLink> links;
-  IpfsClient ipfsClient;
+    internal readonly IpfsContext ipfs;
 
-  /// <summary>
-  ///   Creates a new instance of the <see cref="MerkleNode"/> with the specified
-  ///   <see cref="Cid"/> and optional <see cref="Name"/>.
-  /// </summary>
-  /// <param name="id">
-  ///   The <see cref="Cid"/> of the node.
-  /// </param>
-  /// <param name="name">A name for the node.</param>
-  public MerkleNode( Cid id, string name = null )
-  {
-     Id = id ?? throw new ArgumentNullException( "id" );
-     Name = name;
-  }
+    private long blockSize;
+    private bool hasBlockStats;
+    private IEnumerable<IMerkleLink>? links;
+    private string? name = string.Empty;
 
-  /// <summary>
-  ///   Creates a new instance of the <see cref="MerkleNode"/> with the specified
-  ///   <see cref="Id">cid</see> and optional <see cref="Name"/>.
-  /// </summary>
-  /// <param name="path">
-  ///   The string representation of a <see cref="Cid"/> of the node or "/ipfs/cid".
-  /// </param>
-  /// <param name="name">A name for the node.</param>
-  public MerkleNode( string path, string name = null )
-  {
-     if( string.IsNullOrWhiteSpace( path ) )
-        throw new ArgumentNullException( "path" );
-
-     if( path.StartsWith( "/ipfs/" ) )
-        path = path[6..];
-
-     Id = Cid.Decode( path );
-     Name = name;
-  }
-
-  /// <summary>
-  ///   Creates a new instance of the <see cref="MerkleNode"/> from the
-  ///   <see cref="IMerkleLink"/>.
-  /// </summary>
-  /// <param name="link">The link to a node.</param>
-  public MerkleNode( IMerkleLink link )
-  {
-     Id = link.Id;
-     Name = link.Name;
-     blockSize = link.Size;
-     hasBlockStats = true;
-  }
-
-  internal IpfsClient IpfsClient
-  {
-     get
-     {
-        if( ipfsClient == null )
-        {
-           lock( this )
-           {
-              ipfsClient = new IpfsClient();
-           }
-        }
-        return ipfsClient;
-     }
-     set => ipfsClient = value;
-  }
-
-  /// <inheritdoc />
-  [DataMember]
-  public Cid Id { get; private set; }
-
-  /// <summary>
-  ///   The name for the node.  If unknown it is "" (not null).
-  /// </summary>
-  [DataMember]
-  public string Name
+    /// <summary>
+    /// Creates a new instance of the <see cref="MerkleNode"/> with the specified
+    /// <see cref="Cid"/> and optional <see cref="Name"/>.
+    /// </summary>
+    /// <param name="ipfs">The IPFS context.</param>
+    /// <param name="id">
+    /// The <see cref="Cid"/> of the node.
+    /// </param>
+    /// <param name="name">A name for the node.</param>
+    public MerkleNode(IpfsContext ipfs, Cid id, string? name = null)
     {
-        get => name;
-        set => name = value ?? string.Empty;
+        this.ipfs = ipfs ?? throw new ArgumentNullException(nameof(ipfs));
+        this.Id = id ?? throw new ArgumentNullException(nameof(id));
+        this.Name = name;
     }
 
     /// <summary>
-    ///   Size of the raw, encoded node.
+    /// Creates a new instance of the <see cref="MerkleNode"/> with the specified
+    /// <see cref="Id">cid</see> and optional <see cref="Name"/>.
+    /// </summary>
+    /// <param name="ipfs">The IPFS context.</param>
+    /// <param name="path">
+    /// The string representation of a <see cref="Cid"/> of the node or "/ipfs/cid".
+    /// </param>
+    /// <param name="name">A name for the node.</param>
+    public MerkleNode(IpfsContext ipfs, string path, string? name = null)
+    {
+        this.ipfs = ipfs ?? throw new ArgumentNullException(nameof(ipfs));
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            throw new ArgumentNullException(nameof(path));
+        }
+
+        if (path.StartsWith("/ipfs/"))
+        {
+            path = path[6..];
+        }
+
+        this.Id = Cid.Decode(path);
+        this.Name = name;
+    }
+
+    /// <summary>
+    /// Creates a new instance of the <see cref="MerkleNode"/> from the
+    /// <see cref="IMerkleLink"/>.
+    /// </summary>
+    /// <param name="ipfs">The IPFS context.</param>
+    /// <param name="link">The link to a node.</param>
+    public MerkleNode(IpfsContext ipfs, IMerkleLink link)
+    {
+        this.ipfs = ipfs ?? throw new ArgumentNullException(nameof(ipfs));
+        this.Id = link.Id;
+        this.Name = link.Name;
+        this.blockSize = link.Size;
+        this.hasBlockStats = true;
+    }
+
+    /// <summary>
+    /// Size of the raw, encoded node.
     /// </summary>
     [DataMember]
-  public long BlockSize
-  {
-     get
-     {
-        GetBlockStats();
-        return blockSize;
-     }
-  }
+    public long BlockSize
+    {
+        get
+        {
+            this.GetBlockStats();
+            return this.blockSize;
+        }
+    }
 
-  /// <inheritdoc />
-  /// <seealso cref="BlockSize"/>
-  [DataMember]
-  public long Size => BlockSize;
+    /// <inheritdoc />
+    [DataMember]
+    public byte[] DataBytes => this.ipfs.Block.GetAsync(this.Id).Result.DataBytes;
 
-  /// <inheritdoc />
-  [DataMember]
-  public IEnumerable<IMerkleLink> Links
-     => links ??= IpfsClient.Object.LinksAsync( Id ).Result ;
+    /// <inheritdoc />
+    public Stream DataStream => this.ipfs.Block.GetAsync(this.Id).Result.DataStream;
 
-  /// <inheritdoc />
-  [DataMember]
-  public byte[] DataBytes
-   => IpfsClient.Block.GetAsync( Id ).Result.DataBytes;
+    /// <inheritdoc />
+    [DataMember]
+    public Cid Id
+    {
+        get; private set;
+    }
 
+    /// <inheritdoc />
+    [DataMember]
+    public IEnumerable<IMerkleLink> Links
+    {
+        get
+        {
+            if (this.links is null)
+            {
+                this.links = this.ipfs.Object.LinksAsync(this.Id).Result;
+            }
 
-  /// <inheritdoc />
-  public Stream DataStream
-   => IpfsClient.Block.GetAsync( Id ).Result.DataStream;
+            return this.links;
+        }
+    }
 
-  /// <inheritdoc />
-  public IMerkleLink ToLink( string name = null )
-   => new DagLink( name ?? Name, Id, BlockSize );
+    /// <summary>
+    /// The name for the node.  If unknown it is "" (not null).
+    /// </summary>
+    [DataMember]
+    public string? Name
+    {
+        get => this.name ?? string.Empty;
 
-  /// <summary>
-  ///   Get block statistics about the node, <c>ipfs block stat <i>key</i></c>
-  /// </summary>
-  /// <remarks>
-  ///   The object stats include the block stats.
-  /// </remarks>
-  void GetBlockStats()
-  {
-     if( hasBlockStats ) return;
+        set => this.name = value ?? string.Empty;
+    }
 
-     var stats = IpfsClient.Block.StatAsync( Id ).Result;
-     blockSize = stats.Size;
+    /// <inheritdoc />
+    /// <seealso cref="BlockSize"/>
+    [DataMember]
+    public long Size => this.BlockSize;
 
-     hasBlockStats = true;
-  }
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="hash"></param>
+    public static implicit operator MerkleNode(string hash) => new(IpfsContext.GetServiceProvider().GetRequiredService<IpfsContext>(), hash);
 
-  /// <inheritdoc />
-  public override int GetHashCode()
-   => Id.GetHashCode();
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="a"></param>
+    /// <param name="b"></param>
+    /// <returns></returns>
+    public static bool operator !=(MerkleNode a, MerkleNode b) => !ReferenceEquals(a, b) && (a is null || b is null || !a.Equals(b));
 
-  /// <inheritdoc />
-  public override bool Equals( object obj )
-  {
-     var that = obj as MerkleNode;
-     return that != null && this.Id == that.Id;
-  }
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="a"></param>
+    /// <param name="b"></param>
+    /// <returns></returns>
+    public static bool operator ==(MerkleNode a, MerkleNode b) => ReferenceEquals(a, b) || (a is not null && b is not null && a.Equals(b));
 
-  /// <inheritdoc />
-  public bool Equals( MerkleNode that )
-   => that != null && this.Id == that.Id;
+    /// <inheritdoc />
+    public override bool Equals(object? obj)
+    {
+        var that = obj as MerkleNode;
+        return that is not null && this.Id == that.Id;
+    }
 
-  /// <summary>
-  ///  TODO
-  /// </summary>
-  public static bool operator ==( MerkleNode a, MerkleNode b )
-  {
-     if( ReferenceEquals( a, b ) ) return true;
-     if( a is null ) return false;
-     if( b is null ) return false;
+    /// <inheritdoc />
+    public bool Equals(MerkleNode? that) => that is not null && this.Id == that.Id;
 
-     return a.Equals( b );
-  }
+    /// <inheritdoc />
+    public override int GetHashCode() => this.Id.GetHashCode();
 
-  /// <summary>
-  ///  TODO
-  /// </summary>
-  public static bool operator !=( MerkleNode a, MerkleNode b )
-  {
-     if( ReferenceEquals( a, b ) ) return false;
-     if( a is null ) return true;
-     if( b is null ) return true;
+    /// <inheritdoc />
+    public IMerkleLink ToLink(string? name = null) => new DagLink(name ?? this.Name, this.Id, this.BlockSize);
 
-     return !a.Equals( b );
-  }
+    /// <inheritdoc />
+    public override string ToString() => $"/ipfs/{this.Id}";
 
-  /// <inheritdoc />
-  public override string ToString()
-  => "/ipfs/" + Id;
+    /// <summary>
+    /// Get block statistics about the node, <c>ipfs block stat <i>key</i></c>
+    /// </summary>
+    /// <remarks>
+    /// The object stats include the block stats.
+    /// </remarks>
+    private void GetBlockStats()
+    {
+        if (this.hasBlockStats)
+        {
+            return;
+        }
 
-  /// <summary>
-  ///  TODO
-  /// </summary>
-  static public implicit operator MerkleNode( string hash )
-  => new( hash );
-
+        var stats = this.ipfs.Block.StatAsync(this.Id).Result;
+        this.blockSize = stats.Size;
+        this.hasBlockStats = true;
+    }
 }

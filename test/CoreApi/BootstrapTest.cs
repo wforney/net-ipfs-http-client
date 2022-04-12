@@ -1,75 +1,68 @@
-﻿using Ipfs.Http;
+﻿namespace Ipfs.Http.Client.Tests.CoreApi;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace Ipfs.Http
+[TestClass]
+public class BootstapApiTest
 {
+    private readonly MultiAddress somewhere = "/ip4/127.0.0.1/tcp/4009/ipfs/QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAQ";
 
-    [TestClass]
-    public class BootstapApiTest
+    [TestMethod]
+    public async Task Add_Remove()
     {
-        IpfsClient ipfs = TestFixture.Ipfs;
-        MultiAddress somewhere = "/ip4/127.0.0.1/tcp/4009/ipfs/QmPv52ekjS75L4JmHpXVeuJ5uX2ecSfSZo88NSyxwA3rAQ";
+        var addr = await TestFixture.IpfsContext.Bootstrap.AddAsync(this.somewhere);
+        Assert.IsNotNull(addr);
+        Assert.AreEqual(this.somewhere, addr);
+        var addrs = await TestFixture.IpfsContext.Bootstrap.ListAsync();
+        Assert.IsTrue(addrs.Any(a => a == this.somewhere));
 
-        [TestMethod]
-        public async Task Add_Remove()
+        addr = await TestFixture.IpfsContext.Bootstrap.RemoveAsync(this.somewhere);
+        Assert.IsNotNull(addr);
+        Assert.AreEqual(this.somewhere, addr);
+        addrs = await TestFixture.IpfsContext.Bootstrap.ListAsync();
+        Assert.IsFalse(addrs.Any(a => a == this.somewhere));
+    }
+
+    [TestMethod]
+    public async Task List()
+    {
+        var addrs = await TestFixture.IpfsContext.Bootstrap.ListAsync();
+        Assert.IsNotNull(addrs);
+        Assert.AreNotEqual(0, addrs.Count());
+    }
+
+    [TestMethod]
+    public async Task Remove_All()
+    {
+        var original = await TestFixture.IpfsContext.Bootstrap.ListAsync();
+        await TestFixture.IpfsContext.Bootstrap.RemoveAllAsync();
+        var addrs = await TestFixture.IpfsContext.Bootstrap.ListAsync();
+        Assert.AreEqual(0, addrs.Count());
+        foreach (var addr in original)
         {
-            var addr = await ipfs.Bootstrap.AddAsync(somewhere);
-            Assert.IsNotNull(addr);
-            Assert.AreEqual(somewhere, addr);
-            var addrs = await ipfs.Bootstrap.ListAsync();
-            Assert.IsTrue(addrs.Any(a => a == somewhere));
-
-            addr = await ipfs.Bootstrap.RemoveAsync(somewhere);
-            Assert.IsNotNull(addr);
-            Assert.AreEqual(somewhere, addr);
-            addrs = await ipfs.Bootstrap.ListAsync();
-            Assert.IsFalse(addrs.Any(a => a == somewhere));
+            await TestFixture.IpfsContext.Bootstrap.AddAsync(addr);
         }
+    }
 
-        [TestMethod]
-        public async Task List()
+    [TestMethod]
+    public async Task Add_Defaults()
+    {
+        var original = await TestFixture.IpfsContext.Bootstrap.ListAsync();
+        await TestFixture.IpfsContext.Bootstrap.RemoveAllAsync();
+        try
         {
-            var addrs = await ipfs.Bootstrap.ListAsync();
-            Assert.IsNotNull(addrs);
+            await TestFixture.IpfsContext.Bootstrap.AddDefaultsAsync();
+            var addrs = await TestFixture.IpfsContext.Bootstrap.ListAsync();
             Assert.AreNotEqual(0, addrs.Count());
         }
-
-        [TestMethod]
-        public async Task Remove_All()
+        finally
         {
-            var original = await ipfs.Bootstrap.ListAsync();
-            await ipfs.Bootstrap.RemoveAllAsync();
-            var addrs = await ipfs.Bootstrap.ListAsync();
-            Assert.AreEqual(0, addrs.Count());
+            await TestFixture.IpfsContext.Bootstrap.RemoveAllAsync();
             foreach (var addr in original)
             {
-                await ipfs.Bootstrap.AddAsync(addr);
-            }
-        }
-
-        [TestMethod]
-        public async Task Add_Defaults()
-        {
-            var original = await ipfs.Bootstrap.ListAsync();
-            await ipfs.Bootstrap.RemoveAllAsync();
-            try
-            {
-                await ipfs.Bootstrap.AddDefaultsAsync();
-                var addrs = await ipfs.Bootstrap.ListAsync();
-                Assert.AreNotEqual(0, addrs.Count());
-            }
-            finally
-            {
-                await ipfs.Bootstrap.RemoveAllAsync();
-                foreach (var addr in original)
-                {
-                    await ipfs.Bootstrap.AddAsync(addr);
-                }
+                await TestFixture.IpfsContext.Bootstrap.AddAsync(addr);
             }
         }
     }

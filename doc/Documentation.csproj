@@ -1,7 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0</TargetFrameworks>
+    <Company></Company>
+    <Copyright>Copyright © 2016</Copyright>
+    <Description></Description>
+    <Product>Documentation</Product>
+    <TargetFramework>net6.0</TargetFramework>
+    <Title>Documentation</Title>
   </PropertyGroup>
 
 </Project>
