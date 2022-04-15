@@ -90,7 +90,7 @@ public partial class IpfsClient : IIpfsClient
         }
 
         var client = this.httpClientFactory.CreateClient(IpfsClient.IpfsHttpClientName);
-        using var response = await client.PostAsync(url, content, cancellationToken);
+        var response = await client.PostAsync(url, content, cancellationToken);
         return await this.HandleResponse<TR>(response, cancellationToken);
     }
 
@@ -155,8 +155,8 @@ public partial class IpfsClient : IIpfsClient
         }
 
         httpContent.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
-        return name == UnknownFilename
-            ? new MultipartFormDataContent { { httpContent, "file" } }
+        return string.IsNullOrWhiteSpace(name)
+            ? new MultipartFormDataContent { { httpContent, "file", UnknownFilename } }
             : new MultipartFormDataContent { { httpContent, "file", name } };
     }
 
@@ -194,7 +194,7 @@ public partial class IpfsClient : IIpfsClient
                 this.logger.LogDebug("RSP {json}", json);
             }
 
-            return JsonConvert.DeserializeObject<T>(json);
+            return System.Text.Json.JsonSerializer.Deserialize<T>(json, new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true });
         }
 
         return typeof(T) switch

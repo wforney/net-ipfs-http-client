@@ -12,7 +12,7 @@ public partial class KeyApi
 {
     /// <summary>
     /// Information about a local key.
-    /// </summary>
+    /// </summary>    
     public class KeyInfo : IKey
     {
         /// <inheritdoc />

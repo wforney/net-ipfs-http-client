@@ -2,6 +2,7 @@
 
 using DotNext.Threading;
 using Ipfs.CoreApi;
+using Microsoft.Extensions.DependencyInjection;
 using System.Runtime.Serialization;
 
 /// <inheritdoc />
@@ -20,7 +21,7 @@ public class FileSystemNode : IFileSystemNode
     /// <param name="fileSystemApi">The file system API.</param>
     public FileSystemNode(IFileSystemApi fileSystemApi)
     {
-        this.fileSystemApi = fileSystemApi ?? throw new ArgumentNullException(nameof(fileSystemApi));
+        this.fileSystemApi = fileSystemApi ?? IpfsContext.GetServiceProvider().GetRequiredService<IFileSystemApi>();
         this.dataStream = new(() => this.fileSystemApi.ReadFileAsync(this.Id));
     }
 

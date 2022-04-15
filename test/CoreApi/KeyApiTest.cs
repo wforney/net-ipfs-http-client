@@ -8,33 +8,30 @@ using System.Threading.Tasks;
 [TestClass]
 public class KeyApiTest
 {
+    private readonly int KeySize = 2048;
+
     [TestMethod]
-    public void Api_Exists()
-    {
-        var ipfs = TestFixture.IpfsContext;
-        Assert.IsNotNull(ipfs.Key);
-    }
+    public void Api_Exists() => Assert.IsNotNull(TestFixture.IpfsContext.Key);
 
     [TestMethod]
     public async Task Create_RSA_Key()
     {
         var name = "net-api-test-create";
-        var ipfs = TestFixture.IpfsContext;
-        var key = await ipfs.Key.CreateAsync(name, "rsa", 1024);
         try
         {
+            var key = await TestFixture.IpfsContext.Key.CreateAsync(name, "rsa", this.KeySize);
             Assert.IsNotNull(key);
             Assert.IsNotNull(key.Id);
             Assert.AreEqual(name, key.Name);
 
-            var keys = await ipfs.Key.ListAsync();
+            var keys = await TestFixture.IpfsContext.Key.ListAsync();
             var clone = keys.Single(k => k.Name == name);
             Assert.AreEqual(key.Name, clone.Name);
             Assert.AreEqual(key.Id, clone.Id);
         }
         finally
         {
-            _ = await ipfs.Key.RemoveAsync(name);
+            _ = await TestFixture.IpfsContext.Key.RemoveAsync(name);
         }
     }
 
@@ -42,18 +39,17 @@ public class KeyApiTest
     public async Task Remove_Key()
     {
         var name = "net-api-test-remove";
-        var ipfs = TestFixture.IpfsContext;
-        var key = await ipfs.Key.CreateAsync(name, "rsa", 1024);
-        var keys = await ipfs.Key.ListAsync();
+        var key = await TestFixture.IpfsContext.Key.CreateAsync(name, "rsa", this.KeySize);
+        var keys = await TestFixture.IpfsContext.Key.ListAsync();
         var clone = keys.Single(k => k.Name == name);
         Assert.IsNotNull(clone);
 
-        var removed = await ipfs.Key.RemoveAsync(name);
+        var removed = await TestFixture.IpfsContext.Key.RemoveAsync(name);
         Assert.IsNotNull(removed);
         Assert.AreEqual(key.Name, removed.Name);
         Assert.AreEqual(key.Id, removed.Id);
 
-        keys = await ipfs.Key.ListAsync();
+        keys = await TestFixture.IpfsContext.Key.ListAsync();
         Assert.IsFalse(keys.Any(k => k.Name == name));
     }
 
@@ -62,17 +58,16 @@ public class KeyApiTest
     {
         var oname = "net-api-test-rename1";
         var rname = "net-api-test-rename2";
-        var ipfs = TestFixture.IpfsContext;
-        var okey = await ipfs.Key.CreateAsync(oname, "rsa", 1024);
         try
         {
+            var okey = await TestFixture.IpfsContext.Key.CreateAsync(oname, "rsa", this.KeySize);
             Assert.AreEqual(oname, okey.Name);
 
-            var rkey = await ipfs.Key.RenameAsync(oname, rname);
+            var rkey = await TestFixture.IpfsContext.Key.RenameAsync(oname, rname);
             Assert.AreEqual(okey.Id, rkey.Id);
             Assert.AreEqual(rname, rkey.Name);
 
-            var keys = await ipfs.Key.ListAsync();
+            var keys = await TestFixture.IpfsContext.Key.ListAsync();
             Assert.IsTrue(keys.Any(k => k.Name == rname));
             Assert.IsFalse(keys.Any(k => k.Name == oname));
         }
@@ -80,13 +75,13 @@ public class KeyApiTest
         {
             try
             {
-                _ = await ipfs.Key.RemoveAsync(oname);
+                _ = await TestFixture.IpfsContext.Key.RemoveAsync(oname);
             }
             catch (Exception) { }
 
             try
             {
-                _ = await ipfs.Key.RemoveAsync(rname);
+                _ = await TestFixture.IpfsContext.Key.RemoveAsync(rname);
             }
             catch (Exception) { }
         }
