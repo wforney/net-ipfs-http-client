@@ -101,11 +101,11 @@ public class FileSystemApi : IFileSystemApi
         // The result is a stream of LDJSON objects.
         // See https://github.com/ipfs/go-ipfs/issues/4852
         FileSystemNode? fsn = null;
-        if (response is not null)
+        if (response is not null && response.CanRead)
         {
             using var sr = new StreamReader(response);
             using var jr = new JsonTextReader(sr) { SupportMultipleContent = true };
-            while (jr.Read())
+            while (await jr.ReadAsync(cancel))
             {
                 var r = await JObject.LoadAsync(jr, cancel);
 

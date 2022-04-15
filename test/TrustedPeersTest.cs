@@ -11,22 +11,23 @@ public partial class IpfsClientTest
     [TestMethod]
     public void Trusted_Peers_List()
     {
-        var ipfs = TestFixture.Ipfs;
-        Assert.IsNotNull(ipfs.TrustedPeers);
-        Assert.IsTrue(ipfs.TrustedPeers.Count > 0);
+        Assert.IsNotNull(TestFixture.Ipfs.TrustedPeers);
+        Assert.IsTrue(TestFixture.Ipfs.TrustedPeers.Count > 0);
     }
 
     [TestMethod]
     public void Trusted_Peers_Add_Remove()
     {
-        var ipfs = TestFixture.Ipfs;
-        Assert.IsFalse(ipfs.TrustedPeers.Contains(this.newTrustedPeer));
+        if (TestFixture.Ipfs.TrustedPeers.Contains(this.newTrustedPeer))
+        {
+            _ = TestFixture.Ipfs.TrustedPeers.Remove(this.newTrustedPeer);
+        }
 
-        ipfs.TrustedPeers.Add(this.newTrustedPeer);
-        Assert.IsTrue(ipfs.TrustedPeers.Contains(this.newTrustedPeer));
-
-        ipfs.TrustedPeers.Remove(this.newTrustedPeer);
-        Assert.IsFalse(ipfs.TrustedPeers.Contains(this.newTrustedPeer));
+        Assert.IsFalse(TestFixture.Ipfs.TrustedPeers.Contains(this.newTrustedPeer));
+        TestFixture.Ipfs.TrustedPeers.Add(this.newTrustedPeer);
+        Assert.IsTrue(TestFixture.Ipfs.TrustedPeers.Contains(this.newTrustedPeer));
+        Assert.IsTrue(TestFixture.Ipfs.TrustedPeers.Remove(this.newTrustedPeer));
+        Assert.IsFalse(TestFixture.Ipfs.TrustedPeers.Contains(this.newTrustedPeer));
     }
 
     // js-ipfs does NOT check IPFS addresses.
@@ -45,15 +46,13 @@ public partial class IpfsClientTest
     [TestMethod]
     public void Trusted_Peers_Clear()
     {
-        var ipfs = TestFixture.Ipfs;
-        var original = ipfs.TrustedPeers.ToArray();
-
-        ipfs.TrustedPeers.Clear();
-        Assert.AreEqual(0, ipfs.TrustedPeers.Count);
+        var original = TestFixture.Ipfs.TrustedPeers.ToArray();
+        TestFixture.Ipfs.TrustedPeers.Clear();
+        Assert.AreEqual(0, TestFixture.Ipfs.TrustedPeers.Count);
 
         foreach (var a in original)
         {
-            ipfs.TrustedPeers.Add(a);
+            TestFixture.Ipfs.TrustedPeers.Add(a);
         }
     }
 
