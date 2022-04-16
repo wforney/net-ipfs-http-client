@@ -1,7 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <ImplicitUsings>enable</ImplicitUsings>
     <IsPackable>false</IsPackable>
+    <Nullable>enable</Nullable>
     <RootNamespace>Ipfs.Http.Client.Tests</RootNamespace>
     <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>

@@ -38,8 +38,18 @@ public class KeyApiTest
     [TestMethod]
     public async Task Remove_Key()
     {
-        var name = "net-api-test-remove";
-        var key = await TestFixture.IpfsContext.Key.CreateAsync(name, "rsa", this.KeySize);
+        const string name = "net-api-test-remove";
+        IKey key;
+        try
+        {
+            key = await TestFixture.IpfsContext.Key.RemoveAsync(name);
+        }
+        catch
+        {
+            // ignore
+        }
+
+        key = await TestFixture.IpfsContext.Key.CreateAsync(name, "rsa", this.KeySize);
         var keys = await TestFixture.IpfsContext.Key.ListAsync();
         var clone = keys.Single(k => k.Name == name);
         Assert.IsNotNull(clone);

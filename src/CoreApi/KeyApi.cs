@@ -45,39 +45,16 @@ public partial class KeyApi : IKeyApi
     public async Task<IEnumerable<IKey?>?> ListAsync(CancellationToken cancel = default)
     {
         var json = await this.ipfs.ExecuteCommand<string?>("key/list", null, cancel, "l=true");
-        if (json is null)
-        {
-            return null;
-        }
 
-        var keys = (JArray?)JObject.Parse(json)?["Keys"];
-        return keys
-            ?.Select(
-                k => new KeyInfo
-                {
-                    Id = (string?)k?["Id"],
-                    Name = (string?)k?["Name"]
-                });
+        return FromJson(json);
     }
 
     /// <inheritdoc />
     public async Task<IKey?> RemoveAsync(string name, CancellationToken cancel = default)
     {
         var json = await this.ipfs.ExecuteCommand<string?>("key/rm", name, cancel);
-        if (json is null)
-        {
-            return null;
-        }
 
-        var keys = JObject.Parse(json)?["Keys"] as JArray;
-
-        return keys?
-            .Select(k => new KeyInfo
-            {
-                Id = (string?)k?["Id"],
-                Name = (string?)k?["Name"]
-            })
-            .First();
+        return FromJson(json).FirstOrDefault();
     }
 
     /// <inheritdoc />
@@ -95,5 +72,42 @@ public partial class KeyApi : IKeyApi
             Id = (string?)key?["Id"],
             Name = (string?)key?["Now"]
         };
+    }
+
+    /// <summary>
+    /// Returns an <see cref="IKey" /> from the specified JSON <see cref="string" />.
+    /// </summary>
+    /// <param name="json">The JSON <see cref="string" />.</param>
+    /// <returns>An <see cref="IKey"/>.</returns>
+    private static IEnumerable<IKey> FromJson(string? json)
+    {
+        if (json is null)
+        {
+            yield break;
+        }
+
+        var obj = JObject.Parse(json);
+        if (obj is null)
+        {
+            yield break;
+        }
+
+        var keys = (JArray?)obj["Keys"];
+        if (keys is null)
+        {
+            yield break;
+        }
+
+        foreach (var key in keys)
+        {
+            var id = (string?)key["Id"];
+            var name = ((string?)key["Name"])?.Trim();
+
+            yield return new KeyInfo
+            {
+                Id = string.IsNullOrWhiteSpace(id) ? null : new MultiHash(id),
+                Name = name
+            };
+        }
     }
 }

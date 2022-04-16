@@ -194,7 +194,7 @@ public partial class IpfsClient : IIpfsClient
                 this.logger.LogDebug("RSP {json}", json);
             }
 
-            return System.Text.Json.JsonSerializer.Deserialize<T>(json, new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            return JsonConvert.DeserializeObject<T>(json);
         }
 
         return typeof(T) switch
