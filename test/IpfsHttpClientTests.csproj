@@ -1,11 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-	<TargetFrameworks>net6.0</TargetFrameworks>
-
     <IsPackable>false</IsPackable>
-    <DebugType>full</DebugType>
-    <RootNamespace>Ipfs.Http</RootNamespace>
+    <RootNamespace>Ipfs.Http.Tests</RootNamespace>
+	<TargetFrameworks>net6.0</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,6 +15,5 @@
   <ItemGroup>
     <ProjectReference Include="..\src\IpfsHttpClient.csproj" />
   </ItemGroup>
-
 
 </Project>

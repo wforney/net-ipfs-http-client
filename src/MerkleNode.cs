@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Runtime.Serialization;
-
-namespace Ipfs.Http
+﻿namespace Ipfs.Http
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Runtime.Serialization;
+
     /// <summary>
     ///   The IPFS <see href="https://github.com/ipfs/specs/tree/master/merkledag">MerkleDag</see> is the datastructure at the heart of IPFS. It is an acyclic directed graph whose edges are hashes.
     /// </summary>
@@ -14,11 +14,11 @@ namespace Ipfs.Http
     [DataContract]
     public class MerkleNode : IMerkleNode<IMerkleLink>, IEquatable<MerkleNode>
     {
-        bool hasBlockStats;
-        long blockSize;
-        string name;
-        IEnumerable<IMerkleLink> links;
-        IpfsClient ipfsClient;
+        private bool hasBlockStats;
+        private long blockSize;
+        private string name;
+        private IEnumerable<IMerkleLink> links;
+        private IpfsClient ipfsClient;
 
         /// <summary>
         ///   Creates a new instance of the <see cref="MerkleNode"/> with the specified
@@ -30,10 +30,7 @@ namespace Ipfs.Http
         /// <param name="name">A name for the node.</param>
         public MerkleNode(Cid id, string name = null)
         {
-            if (id == null)
-                throw new ArgumentNullException("id");
-
-            Id = id;
+            Id = id ?? throw new ArgumentNullException(nameof(id));
             Name = name;
         }
 
@@ -48,10 +45,14 @@ namespace Ipfs.Http
         public MerkleNode(string path, string name = null)
         {
             if (string.IsNullOrWhiteSpace(path))
+            {
                 throw new ArgumentNullException("path");
+            }
 
             if (path.StartsWith("/ipfs/"))
+            {
                 path = path.Substring(6);
+            }
 
             Id = Cid.Decode(path);
             Name = name;
@@ -74,19 +75,18 @@ namespace Ipfs.Http
         {
             get
             {
-                if (ipfsClient == null)
+                if (ipfsClient is null)
                 {
                     lock (this)
                     {
                         ipfsClient = new IpfsClient();
                     }
                 }
+
                 return ipfsClient;
             }
-            set
-            {
-                ipfsClient = value;
-            }
+
+            set => ipfsClient = value;
         }
 
         /// <inheritdoc />
@@ -94,24 +94,33 @@ namespace Ipfs.Http
         public Cid Id { get; private set; }
 
         /// <summary>
-        ///   The name for the node.  If unknown it is "" (not null).
+        ///   Gets or sets the name for the node.  If unknown it is "" (not null).
         /// </summary>
         [DataMember]
         public string Name
         {
-            get { return name; }
-            set { name = value ?? string.Empty; }
+            get => name;
+            set => name = value ?? string.Empty;
         }
 
         /// <summary>
-        ///   Size of the raw, encoded node.
+        ///   Gets the size of the raw, encoded node.
         /// </summary>
         [DataMember]
         public long BlockSize
         {
             get
             {
-                GetBlockStats();
+                if (hasBlockStats)
+                {
+                    return blockSize;
+                }
+
+                var stats = IpfsClient.Block.StatAsync(Id).GetAwaiter().GetResult();
+                blockSize = stats.Size;
+
+                hasBlockStats = true;
+
                 return blockSize;
             }
         }
@@ -119,14 +128,7 @@ namespace Ipfs.Http
         /// <inheritdoc />
         /// <seealso cref="BlockSize"/>
         [DataMember]
-        public long Size
-        {
-            get
-            {
-                return BlockSize;
-            }
-        }
-
+        public long Size => BlockSize;
 
         /// <inheritdoc />
         [DataMember]
@@ -134,9 +136,9 @@ namespace Ipfs.Http
         {
             get
             {
-                if (links == null)
+                if (links is null)
                 {
-                    links = IpfsClient.Object.LinksAsync(Id).Result;
+                    links = IpfsClient.Object.LinksAsync(Id).GetAwaiter().GetResult();
                 }
 
                 return links;
@@ -145,51 +147,16 @@ namespace Ipfs.Http
 
         /// <inheritdoc />
         [DataMember]
-        public byte[] DataBytes
-        {
-            get
-            {
-                return IpfsClient.Block.GetAsync(Id).Result.DataBytes;
-            }
-        }
+        public byte[] DataBytes => IpfsClient.Block.GetAsync(Id).Result.DataBytes;
 
         /// <inheritdoc />
-        public Stream DataStream
-        {
-            get
-            {
-                return IpfsClient.Block.GetAsync(Id).Result.DataStream;
-            }
-        }
+        public Stream DataStream => IpfsClient.Block.GetAsync(Id).Result.DataStream;
 
         /// <inheritdoc />
-        public IMerkleLink ToLink(string name = null)
-        {
-            return new DagLink(name ?? Name, Id, BlockSize);
-        }
-
-        /// <summary>
-        ///   Get block statistics about the node, <c>ipfs block stat <i>key</i></c>
-        /// </summary>
-        /// <remarks>
-        ///   The object stats include the block stats.
-        /// </remarks>
-        void GetBlockStats()
-        {
-            if (hasBlockStats)
-                return;
-
-            var stats = IpfsClient.Block.StatAsync(Id).Result;
-            blockSize = stats.Size;
-
-            hasBlockStats = true;
-        }
+        public IMerkleLink ToLink(string name = null) => new DagLink(name ?? Name, Id, BlockSize);
 
         /// <inheritdoc />
-        public override int GetHashCode()
-        {
-            return Id.GetHashCode();
-        }
+        public override int GetHashCode() => Id.GetHashCode();
 
         /// <inheritdoc />
         public override bool Equals(object obj)
@@ -199,48 +166,32 @@ namespace Ipfs.Http
         }
 
         /// <inheritdoc />
-        public bool Equals(MerkleNode that)
-        {
-            return that != null && this.Id == that.Id;
-        }
+        public bool Equals(MerkleNode that) => that != null && this.Id == that.Id;
 
         /// <summary>
-        ///  TODO
+        /// Implements the == operator.
         /// </summary>
-        public static bool operator ==(MerkleNode a, MerkleNode b)
-        {
-            if (object.ReferenceEquals(a, b)) return true;
-            if (object.ReferenceEquals(a, null)) return false;
-            if (object.ReferenceEquals(b, null)) return false;
-
-            return a.Equals(b);
-        }
+        /// <param name="a">The first.</param>
+        /// <param name="b">The second.</param>
+        /// <returns>The result of the operator.</returns>
+        public static bool operator ==(MerkleNode a, MerkleNode b) => ReferenceEquals(a, b) || (!(a is null) && !(b is null) && a.Equals(b));
 
         /// <summary>
-        ///  TODO
+        /// Implements the != operator.
         /// </summary>
-        public static bool operator !=(MerkleNode a, MerkleNode b)
-        {
-            if (object.ReferenceEquals(a, b)) return false;
-            if (object.ReferenceEquals(a, null)) return true;
-            if (object.ReferenceEquals(b, null)) return true;
-
-            return !a.Equals(b);
-        }
+        /// <param name="a">a.</param>
+        /// <param name="b">The b.</param>
+        /// <returns>The result of the operator.</returns>
+        public static bool operator !=(MerkleNode a, MerkleNode b) => !ReferenceEquals(a, b) && (a is null || b is null || !a.Equals(b));
 
         /// <inheritdoc />
-        public override string ToString()
-        {
-            return "/ipfs/" + Id;
-        }
+        public override string ToString() => $"/ipfs/{Id}";
 
         /// <summary>
-        ///  TODO
+        /// Performs an implicit conversion from <see cref="System.String"/> to <see cref="MerkleNode"/>.
         /// </summary>
-        static public implicit operator MerkleNode(string hash)
-        {
-            return new MerkleNode(hash);
-        }
-
+        /// <param name="hash">The hash.</param>
+        /// <returns>The result of the conversion.</returns>
+        public static implicit operator MerkleNode(string hash) => new MerkleNode(hash);
     }
 }

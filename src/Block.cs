@@ -1,49 +1,31 @@
-﻿using System.IO;
-using System.Runtime.Serialization;
-
-namespace Ipfs.Http
+﻿namespace Ipfs.Http
 {
-    /// <inheritdoc />
-    [DataContract]
-    public class Block : IDataBlock
-    {
-        long? size;
+	using System.IO;
+	using System.Runtime.Serialization;
 
-        /// <inheritdoc />
-        [DataMember]
-        public Cid Id { get; set; }
+	/// <inheritdoc />
+	[DataContract]
+	public class Block : IDataBlock
+	{
+		private long? size;
 
-        /// <inheritdoc />
-        [DataMember]
-        public byte[] DataBytes { get; set; }
+		/// <inheritdoc />
+		[DataMember]
+		public byte[] DataBytes { get; set; }
 
-        /// <inheritdoc />
-        public Stream DataStream
-        {
-            get
-            {
-                return new MemoryStream(DataBytes, false);
-            }
-        }
+		/// <inheritdoc />
+		public Stream DataStream => new MemoryStream(DataBytes, false);
 
-        /// <inheritdoc />
-        [DataMember]
-        public long Size
-        {
-            get
-            {
-                if (size.HasValue)
-                {
-                    return size.Value;
-                }
-                return DataBytes.Length;
-            }
-            set
-            {
-                size = value;
-            }
-        }
+		/// <inheritdoc />
+		[DataMember]
+		public Cid Id { get; set; }
 
-    }
-
+		/// <inheritdoc />
+		[DataMember]
+		public long Size
+		{
+			get => size ?? DataBytes.Length;
+			set => size = value;
+		}
+	}
 }

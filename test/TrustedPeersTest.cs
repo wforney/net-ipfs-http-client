@@ -1,11 +1,11 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Linq;
-
-namespace Ipfs.Http
+﻿namespace Ipfs.Http
 {
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using System.Linq;
+
     public partial class IpfsClientTest
     {
-        private MultiAddress newTrustedPeer = new MultiAddress("/ip4/25.196.147.100/tcp/4001/ipfs/QmaMqSwWShsPg2RbredZtoneFjXhim7AQkqbLxib45Lx4S");
+        private readonly MultiAddress newTrustedPeer = new("/ip4/25.196.147.100/tcp/4001/ipfs/QmaMqSwWShsPg2RbredZtoneFjXhim7AQkqbLxib45Lx4S");
 
         [TestMethod]
         public void Trusted_Peers_List()
@@ -24,7 +24,7 @@ namespace Ipfs.Http
             ipfs.TrustedPeers.Add(newTrustedPeer);
             Assert.IsTrue(ipfs.TrustedPeers.Contains(newTrustedPeer));
 
-            ipfs.TrustedPeers.Remove(newTrustedPeer);
+            _ = ipfs.TrustedPeers.Remove(newTrustedPeer);
             Assert.IsFalse(ipfs.TrustedPeers.Contains(newTrustedPeer));
         }
 
@@ -51,7 +51,9 @@ namespace Ipfs.Http
             Assert.AreEqual(0, ipfs.TrustedPeers.Count);
 
             foreach (var a in original)
+            {
                 ipfs.TrustedPeers.Add(a);
+            }
         }
 
         [TestMethod]
@@ -67,7 +69,9 @@ namespace Ipfs.Http
 
             ipfs.TrustedPeers.Clear();
             foreach (var a in original)
+            {
                 ipfs.TrustedPeers.Add(a);
+            }
         }
     }
 }

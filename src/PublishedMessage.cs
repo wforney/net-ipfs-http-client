@@ -1,14 +1,14 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using Multiformats.Base;
-
-namespace Ipfs.Http
+﻿namespace Ipfs.Http
 {
+    using Multiformats.Base;
+    using Newtonsoft.Json.Linq;
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Runtime.Serialization;
+    using System.Text;
+
     /// <summary>
     ///   A published message.
     /// </summary>
@@ -33,7 +33,7 @@ namespace Ipfs.Http
             this.SequenceNumber = Multibase.Decode((string)o["seqno"], out MultibaseEncoding _);
             this.DataBytes = Multibase.Decode((string)o["data"], out MultibaseEncoding _);
 
-            var topics = (JArray) (o["topicIDs"]);
+            var topics = (JArray)o["topicIDs"];
             this.Topics = topics.Select(t => Encoding.UTF8.GetString(Multibase.Decode((string)t, out MultibaseEncoding _)));
         }
 
@@ -54,33 +54,19 @@ namespace Ipfs.Http
         public byte[] DataBytes { get; private set; }
 
         /// <inheritdoc />
-        public Stream DataStream
-        {
-            get
-            {
-                return new MemoryStream(DataBytes, false);
-            }
-        }
+        public Stream DataStream => new MemoryStream(DataBytes, false);
 
         /// <inheritdoc />
         [DataMember]
-        public long Size
-        {
-            get { return DataBytes.Length; }
-        }
+        public long Size => DataBytes.Length;
+
         /// <summary>
         ///   Contents as a string.
         /// </summary>
         /// <value>
         ///   The contents interpreted as a UTF-8 string.
         /// </value>
-        public string DataString
-        {
-            get
-            {
-                return Encoding.UTF8.GetString(DataBytes);
-            }
-        }
+        public string DataString => Encoding.UTF8.GetString(DataBytes);
 
         /// <summary>>
         ///   NOT SUPPORTED.
